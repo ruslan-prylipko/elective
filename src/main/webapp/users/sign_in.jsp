@@ -7,17 +7,17 @@
 	</head>
 	<body>
 		<div>
-			<form action="../main" accept-charset="UTF-8" method="post">
+			<form action="../login" accept-charset="UTF-8" method="post">
 				<div>
 					<label>Username or email</label><p>
-					<input name="username" required="required" title="This field is required" type="text">
+					<input name="username" required="required" title="This field is required." type="text">
 				</div>
 				<div>
 					<label>Password</label><p>
-					<input name="password" required="required" title="This field is required" type="password">
+					<input name="password" required="required" title="This field is required." type="password">
 				</div>
 				<div>
-					<button name="button" value="Sign in" type="submit">Sign in</button>
+					<button name="button" type="submit">Sign in</button>
 				</div>
 			</form>
 		</div>

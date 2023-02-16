@@ -7,6 +7,10 @@ import javax.sql.DataSource;
 
 public class DataSourceConfig {
 	
+	private DataSourceConfig() {
+		
+	}
+	
 	public static DataSource getDataSource() {
 		
 		Context initContext = null;
