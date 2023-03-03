@@ -69,6 +69,13 @@ public class User implements Serializable {
 		this.role = role;
 	}
 	
+	public boolean isEmpty() {
+		if (id == 0 && username == null && firstName == null && middleName == null && lastName == null && email == null && role == null) {
+			return true;
+		}
+		return false;
+	}	
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(email, id, username);
@@ -89,6 +96,6 @@ public class User implements Serializable {
 	@Override
 	public String toString() {
 		return "id = " + id + ", username = " + username + ", firstName = " + firstName + ", middleName = " + middleName
-				+ ", lastName = " + lastName + ", email = " + email;
-	}	
+				+ ", lastName = " + lastName + ", email = " + email + ", role = " + role;
+	}
 }

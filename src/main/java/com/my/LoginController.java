@@ -3,12 +3,17 @@ package com.my;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.my.dao.data.LoginException;
 import com.my.dao.data.UserLogin;
 import com.my.datacontroll.PreparedData;
 import com.my.entity.Login;
@@ -16,6 +21,7 @@ import com.my.entity.User;
 
 @WebServlet("/login")
 public class LoginController extends HttpServlet {
+	private static final Logger LOGGER = LogManager.getLogger();
 	
 	private static final long serialVersionUID = 1L;
 
@@ -24,11 +30,36 @@ public class LoginController extends HttpServlet {
 		String emailOrUsername = req.getParameter("username");
 		String password = req.getParameter("password");
 		
-		User user = authenticate(emailOrUsername, password);
-		resp.getOutputStream().println("Hello" + " " + user);
+		User user;
+		try {
+			user = authenticate(emailOrUsername, password);
+			resp.getOutputStream().println("Hello" + " " + user);
+		} catch (IllegalArgumentException | SQLException | NamingException | LoginException e) {
+			LOGGER.error(e.getMessage());
+			LOGGER.debug(e);
+			req.setAttribute("exception", e.getMessage());
+			try {
+				req.getRequestDispatcher("errors/error.jsp").forward(req, resp);
+			} catch (ServletException | IOException ex) {
+				LOGGER.error(ex.getMessage());
+				LOGGER.debug(ex);
+				throw ex;
+			}
+		}
 	}
 
-	private User authenticate(String emailOrUsername, String password) {
+	/**
+	 * User authenticate.
+	 * 
+	 * @param emailOrUsername - String type
+	 * @param password - String type
+	 * @return User object
+	 * @throws IllegalArgumentException
+	 * @throws SQLException
+	 * @throws NamingException
+	 * @throws LoginException
+	 */
+	private User authenticate(String emailOrUsername, String password) throws IllegalArgumentException, SQLException, NamingException, LoginException {
 		Login login = new Login();
 		User user = null;
 		try {
@@ -42,13 +73,11 @@ public class LoginController extends HttpServlet {
 				login.setPassword(password);
 			}
 			user = UserLogin.select(login);
-		} catch (IllegalArgumentException e) {
-			System.out.println("Error!");
-			e.printStackTrace();
-		} catch (SQLException e) {
-			System.out.println("Error!");
-			e.printStackTrace();
-		}
+		} catch (IllegalArgumentException | SQLException | LoginException e) {
+			LOGGER.error(e.getMessage());	
+			LOGGER.debug(e);	
+			throw e;
+		}  
 		return user;
 	}
 	

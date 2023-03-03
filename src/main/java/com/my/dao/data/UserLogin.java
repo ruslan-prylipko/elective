@@ -4,34 +4,54 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 
+import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.my.db.DataSourceConfig;
 import com.my.entity.Login;
 import com.my.entity.User;
 
 public class UserLogin {
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	private static final String SELECT_USER_BY_USENAME = 
-			"SELECT id, username, first_name, middle_name, last_name, email "
+			"SELECT user.id, user.username, user.first_name, user.middle_name, user.last_name, user.email, role.name "
 			+ "FROM user "
-			+ "WHERE username = ? AND password = ?";
+			+ "LEFT JOIN role ON user.role_id=role.id "
+			+ "WHERE user.username = ? AND user.password = ?;";
 	private static final String SELECT_USER_BY_EMAIL = 
-			"SELECT id, username, first_name, middle_name, last_name, email "
+			"SELECT user.id, user.username, user.first_name, user.middle_name, user.last_name, user.email, role.name "
 			+ "FROM user "
-			+ "WHERE email = ? AND password = ?";
+			+ "LEFT JOIN role ON user.role_id=role.id "
+			+ "WHERE user.email = ? AND user.password = ?;";
 
 	private UserLogin () {
 		
 	}
 	
-	public static User select(Login login) throws SQLException {
+	/**
+	 * Select user from database by passed login parameters.
+	 * 
+	 * @param login - Login type
+	 * @return User object
+	 * @throws SQLException
+	 * @throws NamingException
+	 * @throws LoginException
+	 */
+	public static User select(Login login) throws SQLException, NamingException, LoginException {
 		User user = null;
-		DataSource ds = DataSourceConfig.getDataSource();
+		DataSource ds = null;
 		PreparedStatement statement = null;
 		ResultSet rs = null;
-		try (Connection connection = ds.getConnection()) {
+		Connection connection = null;
+		try {
+			ds = DataSourceConfig.getDataSource();
+			connection = ds.getConnection();
 			if (login.isEmailFlag()) {
 				statement = connection.prepareStatement(SELECT_USER_BY_EMAIL);
 				statement.setString(1, login.getEmail());
@@ -49,13 +69,29 @@ public class UserLogin {
 				user.setMiddleName(rs.getString("middle_name"));
 				user.setLastName(rs.getString("last_name"));
 				user.setEmail(rs.getString("email"));
+				user.setRole(rs.getString("name"));
 			}
+			if (user.isEmpty()) {
+				throw new LoginException("Wrong data to log in!");
+			}
+		} catch (SQLTimeoutException e) {
+			SQLTimeoutException ex = new SQLTimeoutException("Connection to database timed out!", e);
+			LOGGER.error(ex.getMessage());
+			LOGGER.debug(ex);
+			throw ex;
 		} catch (SQLException e) {
-			System.out.println("Error!");
+			SQLException ex = new SQLException("A database access error!", e);
+			LOGGER.error(ex.getMessage());
+			LOGGER.debug(ex);
+			throw ex;
+		} catch (LoginException e) {
+			LOGGER.error(e.getMessage());
+			LOGGER.debug(e);
 			throw e;
 		} finally {
 			close(rs);
 			close(statement);
+			close(connection);
 		}
 		return user;
 	}
@@ -65,7 +101,9 @@ public class UserLogin {
 			try {
 				resourse.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				Exception ex = new Exception("The resource cannot be closed!", e);
+				LOGGER.error(ex.getMessage());
+				LOGGER.debug(ex);
 			}
 		}
 	}

@@ -4,7 +4,8 @@ import com.my.dao.data.DataManipulation;
 
 /**
  * Factory method to get DAO object
- * for User, Course
+ * @see UserManager
+ * @see CourseManager
  */
 public abstract class ManagerDB {
 	/**

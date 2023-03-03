@@ -6,12 +6,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.my.db.DataSourceConfig;
 import com.my.entity.User;
 
 public class UserData implements DataManipulation<User> {
+	private static final Logger LOGGER = LogManager.getLogger();
 	
 	private static final String SELECT_USER = 
 			"SELECT id, username, first_name, middle_name, last_name, email FROM user WHERE username = ?";
@@ -27,10 +32,17 @@ public class UserData implements DataManipulation<User> {
 	}
 
 	@Override
-	public User select(User t) throws SQLException {
-		DataSource dataSource = DataSourceConfig.getDataSource();
+	public User select(User t) throws SQLException, NamingException {
+		DataSource dataSource;
+		try {
+			dataSource = DataSourceConfig.getDataSource();
+		} catch (NamingException e) {
+			LOGGER.error(e.getMessage());
+			LOGGER.debug(e);
+			throw e;
+		}
 		try (Connection connection = dataSource.getConnection();
-			PreparedStatement preparableStatement = connection.prepareStatement(SELECT_USER);) {
+			PreparedStatement preparableStatement = connection.prepareStatement(SELECT_USER)) {
 			preparableStatement.setString(1, t.getUsername());
 			ResultSet rs = preparableStatement.executeQuery();
 			

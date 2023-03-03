@@ -3,17 +3,21 @@ package com.my.datacontroll;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Prepares user's passed data to Login or Registration.
  */
 public class PreparedData {
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	private PreparedData() {
 		
 	}
 	
 	/**
-	 * Сhecking if a string is an username.
+	 * Checking if a string is an username.
 	 * @param str - string to check
 	 * @return - return true if str is correct username.
 	 * @throws IllegalArgumentException
@@ -24,7 +28,7 @@ public class PreparedData {
 	}
 	
 	/**
-	 * Сhecking if a string is an email.
+	 * Checking if a string is an email.
 	 * @param str - string to check
 	 * @return - return true if str is correct email.
 	 * @throws IllegalArgumentException
@@ -47,14 +51,24 @@ public class PreparedData {
 	}
 
 	private static void baseStringCheck(String str) throws IllegalArgumentException {
+		IllegalArgumentException exception = null;
 		if (str == null) {
-			throw new IllegalArgumentException("This field must be full!");
+			exception = new IllegalArgumentException("This field must be full!");
+			LOGGER.error(exception.getMessage());	
+			LOGGER.debug(exception);
+			throw exception;
 		}
 		if (str.isEmpty()) {
-			throw new IllegalArgumentException("String mustn't be empty!");
+			exception = new IllegalArgumentException("Field mustn't be empty!");
+			LOGGER.error(exception.getMessage());	
+			LOGGER.debug(exception);
+			throw exception;
 		}
 		if (str.isBlank()) {
-			throw new IllegalArgumentException("String mustn't have white space codepoints!");
+			exception = new IllegalArgumentException("String mustn't have white space codepoints!");
+			LOGGER.error(exception.getMessage());	
+			LOGGER.debug(exception);
+			throw exception;
 		}
 	}
 	
