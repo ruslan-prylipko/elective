@@ -9,6 +9,10 @@ import org.apache.logging.log4j.Logger;
 /**
  * Prepares user's passed data to Login or Registration.
  */
+/**
+ * @author Ruslan
+ *
+ */
 public class PreparedData {
 	private static final Logger LOGGER = LogManager.getLogger();
 
@@ -18,13 +22,26 @@ public class PreparedData {
 	
 	/**
 	 * Checking if a string is an username.
+	 * 
 	 * @param str - string to check
-	 * @return - return true if str is correct username.
-	 * @throws IllegalArgumentException
+	 * @return true - if str is correct username.
+	 * @throws IllegalArgumentException if passed username is incorrect.
 	 */
 	public static boolean isUsername(String str) throws IllegalArgumentException {
 		baseStringCheck(str);
 		return checkByPattern("^[A-Za-z][A-Za-z0-9_-]{7,29}$", str);
+	}
+	
+	
+	/**
+	 * Method validates first, middle and last name.
+	 * 
+	 * @param str - string representing first, middle or last name.
+	 * @return true - if name is valid otherwise - false.
+	 */
+	public static boolean isName(String str) {
+		baseStringCheck(str);
+		return checkByPattern("^[A-Za-z][A-Za-z\\\\s]{1,29}$", str);
 	}
 	
 	/**
@@ -51,25 +68,29 @@ public class PreparedData {
 	}
 
 	private static void baseStringCheck(String str) throws IllegalArgumentException {
-		IllegalArgumentException exception = null;
 		if (str == null) {
-			exception = new IllegalArgumentException("This field must be full!");
-			LOGGER.error(exception.getMessage());	
-			LOGGER.debug(exception);
-			throw exception;
+			throwInfoException("This field must be full!");
 		}
 		if (str.isEmpty()) {
-			exception = new IllegalArgumentException("Field mustn't be empty!");
-			LOGGER.error(exception.getMessage());	
-			LOGGER.debug(exception);
-			throw exception;
+			throwInfoException("Field mustn't be empty!");
 		}
 		if (str.isBlank()) {
-			exception = new IllegalArgumentException("String mustn't have white space codepoints!");
-			LOGGER.error(exception.getMessage());	
-			LOGGER.debug(exception);
-			throw exception;
+			throwInfoException("String mustn't have white space codepoints!");
 		}
+	}
+	
+	
+	/**
+	 * Logging user errors by info level and throws exception.
+	 * 
+	 * @param message - error message
+	 * @throws IllegalArgumentException which explanation user error
+	 */
+	private static void throwInfoException(String message) throws IllegalArgumentException {
+		IllegalArgumentException e = new IllegalArgumentException(message);
+		LOGGER.info(e.getMessage());
+		LOGGER.debug(e);
+		throw e;
 	}
 	
 	private static boolean checkByPattern(String reg, String str) {
