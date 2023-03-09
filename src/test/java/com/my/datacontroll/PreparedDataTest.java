@@ -8,35 +8,66 @@ import org.junit.jupiter.api.Test;
 
 class PreparedDataTest {
 	
-	// Tests for isEmail() method
-	
 	@Test
-	void testIsEmailNullInput() {
+	void testNullInput() {	//////////////
 		assertThrows(IllegalArgumentException.class, () -> PreparedData.isEmail(null));
+		assertThrows(IllegalArgumentException.class, () -> PreparedData.isUsername(null));
+		assertThrows(IllegalArgumentException.class, () -> PreparedData.passwordValidation(null));
+		assertThrows(IllegalArgumentException.class, () -> PreparedData.isName(null));
 	}
 	
 	@Test
-	void testIsEmailEmptyInput() {
+	void testEmptyInput() {
 		assertThrows(IllegalArgumentException.class, () -> PreparedData.isEmail(""));
+		assertThrows(IllegalArgumentException.class, () -> PreparedData.isUsername(""));
+		assertThrows(IllegalArgumentException.class, () -> PreparedData.passwordValidation(""));
+		assertThrows(IllegalArgumentException.class, () -> PreparedData.isName(""));
 	}
 	
 	@Test
-	void testIsEmailBlankInput() {
+	void testBlankInput() {
 		assertThrows(IllegalArgumentException.class, () -> PreparedData.isEmail(" 	"));
+		assertThrows(IllegalArgumentException.class, () -> PreparedData.isUsername(" 	"));
+		assertThrows(IllegalArgumentException.class, () -> PreparedData.passwordValidation(" 	"));
+		assertThrows(IllegalArgumentException.class, () -> PreparedData.isName(" 	"));
 	}
 	
 	@Test
-	void testIsEmailCorrectInput() {
+	void testCorrectInput() {
+		// Email
 		assertTrue(() -> PreparedData.isEmail("user.test@gmail.com"));
 		assertTrue(() -> PreparedData.isEmail("user2563@gmail.com"));
 		assertTrue(() -> PreparedData.isEmail("user@gmail.com"));
 		assertTrue(() -> PreparedData.isEmail("user_bambino@i.ua"));
 		assertTrue(() -> PreparedData.isEmail("user-macho@ukr.net"));
 		assertTrue(() -> PreparedData.isEmail("82231user@gmail.com"));
+		// Username
+		assertTrue(() -> PreparedData.isUsername("users-285333"));
+		assertTrue(() -> PreparedData.isUsername("users333uper"));
+		assertTrue(() -> PreparedData.isUsername("usersuper12599"));
+		assertTrue(() -> PreparedData.isUsername("usersuper"));
+		assertTrue(() -> PreparedData.isUsername("user_bambino"));
+		assertTrue(() -> PreparedData.isUsername("user-macho"));
+		assertTrue(() -> PreparedData.isUsername("student_1"));
+		// Password
+		assertTrue(() -> PreparedData.passwordValidation("@User456228*"));
+		assertTrue(() -> PreparedData.passwordValidation("@user456228*"));
+		assertTrue(() -> PreparedData.passwordValidation("@user456228"));
+		assertTrue(() -> PreparedData.passwordValidation("users-285333"));
+		assertTrue(() -> PreparedData.passwordValidation("@Users333uper"));
+		assertTrue(() -> PreparedData.passwordValidation("*5UserSuper"));
+		assertTrue(() -> PreparedData.passwordValidation("@user_bamBino3"));
+		assertTrue(() -> PreparedData.passwordValidation("*user-machO1"));
+		// Name
+		assertTrue(() -> PreparedData.isName("Alice"));		// first name
+		assertTrue(() -> PreparedData.isName("Smith"));		// last name
+		assertTrue(() -> PreparedData.isName("Elizabeth"));	// middle name
+		assertTrue(() -> PreparedData.isName("usersuper"));
 	}
 	
 	@Test
-	void testIsEmailIncorrectInput() {
+	void testIncorrectInput() {
+		// Email
 		assertFalse(() -> PreparedData.isEmail("user%test@gmail.com"));
 		assertFalse(() -> PreparedData.isEmail("user/test@gmail.com"));
 		assertFalse(() -> PreparedData.isEmail("user+user@gmail.com"));
@@ -50,39 +81,7 @@ class PreparedDataTest {
 		assertFalse(() -> PreparedData.isEmail("user*test@gmail.com"));
 		assertFalse(() -> PreparedData.isEmail("        @ukr.net"));
 		assertFalse(() -> PreparedData.isEmail("@ukr.net"));
-	}
-	
-	
-	// Tests for isUsername() method
-	
-	@Test
-	void testIsUsernameNullInput() {
-		assertThrows(IllegalArgumentException.class, () -> PreparedData.isUsername(null));
-	}
-	
-	@Test
-	void testIsUsernameEmptyInput() {
-		assertThrows(IllegalArgumentException.class, () -> PreparedData.isUsername(""));
-	}
-	
-	@Test
-	void testIsUsernameBlankInput() {
-		assertThrows(IllegalArgumentException.class, () -> PreparedData.isUsername(" 	"));
-	}
-	
-	@Test
-	void testIsUsernameCorrectInput() {
-		assertTrue(() -> PreparedData.isUsername("users-285333"));
-		assertTrue(() -> PreparedData.isUsername("users333uper"));
-		assertTrue(() -> PreparedData.isUsername("usersuper12599"));
-		assertTrue(() -> PreparedData.isUsername("usersuper"));
-		assertTrue(() -> PreparedData.isUsername("user_bambino"));
-		assertTrue(() -> PreparedData.isUsername("user-macho"));
-		assertTrue(() -> PreparedData.isUsername("student_1"));
-	}
-	
-	@Test
-	void testIsUsernameIncorrectInput() {
+		// Username
 		assertFalse(() -> PreparedData.isUsername("user%user"));
 		assertFalse(() -> PreparedData.isUsername("user+user"));
 		assertFalse(() -> PreparedData.isUsername("user\\-_"));
@@ -98,39 +97,7 @@ class PreparedDataTest {
 		assertFalse(() -> PreparedData.isUsername("user@test"));
 		assertFalse(() -> PreparedData.isUsername("user*test"));
 		assertFalse(() -> PreparedData.isUsername("user&test"));
-	}
-	
-	// Tests for passwordValidation() method
-	
-	@Test
-	void testPasswordValidationNullInput() {
-		assertThrows(IllegalArgumentException.class, () -> PreparedData.passwordValidation(null));
-	}
-	
-	@Test
-	void testPasswordValidationEmptyInput() {
-		assertThrows(IllegalArgumentException.class, () -> PreparedData.passwordValidation(""));
-	}
-	
-	@Test
-	void testPasswordValidationBlankInput() {
-		assertThrows(IllegalArgumentException.class, () -> PreparedData.passwordValidation(" 	"));
-	}
-	
-	@Test
-	void testPasswordValidationCorrectInput() {
-		assertTrue(() -> PreparedData.passwordValidation("@User456228*"));
-		assertTrue(() -> PreparedData.passwordValidation("@user456228*"));
-		assertTrue(() -> PreparedData.passwordValidation("@user456228"));
-		assertTrue(() -> PreparedData.passwordValidation("users-285333"));
-		assertTrue(() -> PreparedData.passwordValidation("@Users333uper"));
-		assertTrue(() -> PreparedData.passwordValidation("*5UserSuper"));
-		assertTrue(() -> PreparedData.passwordValidation("@user_bamBino3"));
-		assertTrue(() -> PreparedData.passwordValidation("*user-machO1"));
-	}
-	
-	@Test
-	void testPasswordValidationIncorrectInput() {
+		// Password
 		assertFalse(() -> PreparedData.passwordValidation("user%user"));
 		assertFalse(() -> PreparedData.passwordValidation("user+user"));
 		assertFalse(() -> PreparedData.passwordValidation("user\\-_"));
@@ -148,7 +115,23 @@ class PreparedDataTest {
 		assertFalse(() -> PreparedData.passwordValidation("user&test"));
 		assertFalse(() -> PreparedData.passwordValidation("9874562285333"));
 		assertFalse(() -> PreparedData.passwordValidation("usersuper"));
+		// Name
+		assertFalse(() -> PreparedData.isName("user%user"));
+		assertFalse(() -> PreparedData.isName("user+user"));
+		assertFalse(() -> PreparedData.isName("user\\-_"));
+		assertFalse(() -> PreparedData.isName("aaaaaaaa\\\\\\\\\\\\"));
+		assertFalse(() -> PreparedData.isName("/////////"));
+		assertFalse(() -> PreparedData.isName("---------"));
+		assertFalse(() -> PreparedData.isName("_________"));
+		assertFalse(() -> PreparedData.isName("82231user"));
+		assertFalse(() -> PreparedData.isName("user.test"));
+		assertFalse(() -> PreparedData.isName("user/test"));
+		assertFalse(() -> PreparedData.isName("user|test"));
+		assertFalse(() -> PreparedData.isName("user@test"));
+		assertFalse(() -> PreparedData.isName("user*test"));
+		assertFalse(() -> PreparedData.isName("user&test"));
+		assertFalse(() -> PreparedData.isName("user_bambino"));
+		assertFalse(() -> PreparedData.isName("user-macho"));
+		assertFalse(() -> PreparedData.isName("student_1"));
 	}
-	
-	
 }

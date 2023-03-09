@@ -41,7 +41,7 @@ public class PreparedData {
 	 */
 	public static boolean isName(String str) {
 		baseStringCheck(str);
-		return checkByPattern("^[A-Za-z][A-Za-z\\\\s]{1,29}$", str);
+		return checkByPattern("^[A-Za-z][A-Za-z\\s]{1,29}$", str);
 	}
 	
 	/**
