@@ -1,0 +1,20 @@
+CREATE TABLE course (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(45) NOT NULL UNIQUE,
+	duration VARCHAR(45) NOT NULL,
+	start_date DATETIME NOT NULL,
+	end_date DATETIME,
+	count_student INT UNSIGNED NOT NULL,
+	topic_id INT NOT NULL,
+	teacher_id INT NOT NULL,
+	status_id INT NOT NULL,
+	CONSTRAINT fk_course_topic_id FOREIGN KEY (topic_id)
+		REFERENCES topic(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT fk_cource_status_id FOREIGN KEY (status_id)
+		REFERENCES status(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT fk_cource_teacher_id FOREIGN KEY (teacher_id)
+		REFERENCES user(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT
+);

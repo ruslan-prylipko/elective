@@ -1,0 +1,90 @@
+DROP DATABASE IF EXISTS elective_db_test;
+
+CREATE DATABASE IF NOT EXISTS elective_db_test;
+USE elective_db_test;
+
+DROP TABLE IF EXISTS registration;
+DROP TABLE IF EXISTS journal;
+DROP TABLE IF EXISTS course;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS status;
+DROP TABLE IF EXISTS topic;
+DROP TABLE IF EXISTS role;
+
+CREATE TABLE topic (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(45) NOT NULL UNIQUE
+);
+
+CREATE TABLE status (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	status VARCHAR(45) NOT NULL UNIQUE
+);
+
+CREATE TABLE role (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(45) NOT NULL UNIQUE
+);
+
+CREATE TABLE user (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(45) NOT NULL UNIQUE,
+	password VARCHAR(45) NOT NULL UNIQUE,
+	first_name VARCHAR(45) NOT NULL,
+	middle_name VARCHAR(45) NOT NULL,
+	last_name VARCHAR(45) NOT NULL,
+	email VARCHAR(45) NOT NULL UNIQUE,
+	role_id INT NOT NULL,
+	CONSTRAINT fk_user_role_id FOREIGN KEY (role_id)
+		REFERENCES role(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE course (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(45) NOT NULL UNIQUE,
+	duration VARCHAR(45) NOT NULL,
+	start_date DATETIME NOT NULL,
+	end_date DATETIME,
+	count_student INT UNSIGNED NOT NULL,
+	topic_id INT NOT NULL,
+	teacher_id INT NOT NULL,
+	status_id INT NOT NULL,
+	CONSTRAINT fk_course_topic_id FOREIGN KEY (topic_id)
+		REFERENCES topic(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT fk_cource_status_id FOREIGN KEY (status_id)
+		REFERENCES status(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT fk_cource_teacher_id FOREIGN KEY (teacher_id)
+		REFERENCES user(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE registration (
+	course_id INT,
+	student_id INT,
+	registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (course_id, student_id),
+	CONSTRAINT registration_course_id FOREIGN KEY (course_id)
+		REFERENCES course(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT registration_student_id FOREIGN KEY (student_id)
+		REFERENCES user(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE journal (
+	teacher_id INT NOT NULL,
+	student_id INT NOT NULL,
+	course_id INT NOT NULL,
+	CONSTRAINT journal_teacher_id FOREIGN KEY (teacher_id)
+		REFERENCES user(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT journal_student_id FOREIGN KEY (student_id)
+		REFERENCES user(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT journal_course_id FOREIGN KEY (course_id)
+		REFERENCES course(id)
+		ON UPDATE CASCADE ON DELETE RESTRICT
+);

@@ -1,9 +1,6 @@
 # Compiled class file
 *.class
 
-# Log file
-*.log
-
 # Package Files #
 *.war
 
@@ -11,3 +8,12 @@
 target/
 .project
 .classpath
+
+# Log file
+logs/
+
+#auth
+auth/
+
+#dbeaver
+.dbeaver/

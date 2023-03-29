@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
+import java.sql.Statement;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -37,7 +38,7 @@ public class UserRegistration {
 		try {
 			ds = DataSourceConfig.getDataSource();
 			connection = ds.getConnection();
-			statement = connection.prepareStatement(USER_INSERT);
+			statement = connection.prepareStatement(USER_INSERT, Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, user.getUsername());
 			statement.setString(2, regData.getPassword());
 			statement.setString(3, user.getFirstName());
@@ -45,10 +46,14 @@ public class UserRegistration {
 			statement.setString(5, user.getLastName());
 			statement.setString(6, user.getEmail());
 			statement.setString(7, user.getRole());
-			statement.executeUpdate();
+			int count = statement.executeUpdate();
+			if (count > 0) {
+				resultSet = statement.getGeneratedKeys();
+				if (resultSet.next()) {
+					user.setId(resultSet.getInt(1));
+				}
+			}
 		} catch (NamingException e) {
-			LOGGER.error(e.getMessage());
-			LOGGER.debug(e);
 			rollback(connection);
 			throw e;
 		} catch (SQLTimeoutException e) {
