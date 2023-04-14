@@ -23,8 +23,8 @@ public class DataSourceConfig {
 	 * Configuring a JNDI DataSource with a DB connection pool.
 	 * @return DataSourse object
 	 * @throws NamingException if configuration error occurred
-	 * @throws SQLException 
-	 * @throws IOException 
+	 * @throws SQLException
+	 * @throws IOException
 	 */
 	public static DataSource getDataSource() throws NamingException {
 		Context initContext = null;

@@ -10,7 +10,7 @@
 		<p>
 			Sign in if you already have an account.<br> If you have come
 			here from the registration page, you must log in to activate your
-			account
+			account.
 		</p>
 	</div>
 	<div>

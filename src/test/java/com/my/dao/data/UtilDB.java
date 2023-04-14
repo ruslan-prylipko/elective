@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class UtilDB {
-	private static final String DROP_TABLE_REGISTRATION = "DROP TABLE IF EXISTS registration;";
 	private static final String DROP_TABLE_JOURNAL = "DROP TABLE IF EXISTS journal;";
 	private static final String DROP_TABLE_COURSE = "DROP TABLE IF EXISTS course;";
 	private static final String DROP_TABLE_USER = "DROP TABLE IF EXISTS user;";
@@ -37,7 +36,6 @@ public class UtilDB {
 		statement.execute(load(Paths.get("src/test/resources/sql", "create_table_role.sql").toString()));
 		statement.execute(load(Paths.get("src/test/resources/sql", "create_table_user.sql").toString()));
 		statement.execute(load(Paths.get("src/test/resources/sql", "create_table_course.sql").toString()));
-		statement.execute(load(Paths.get("src/test/resources/sql", "create_table_registration.sql").toString()));
         statement.execute(load(Paths.get("src/test/resources/sql", "create_table_journal.sql").toString()));
         statement.close();
         connection.close();
@@ -52,7 +50,6 @@ public class UtilDB {
 	public static void dropDB() throws SQLException, IOException {
 		Connection connection = DriverManager.getConnection(load(Paths.get("src/test/resources/auth/db", "test-db.txt").toString()));
 		Statement statement = connection.createStatement();
-		statement.execute(DROP_TABLE_REGISTRATION);
 		statement.execute(DROP_TABLE_JOURNAL);
 		statement.execute(DROP_TABLE_COURSE);
 		statement.execute(DROP_TABLE_USER);

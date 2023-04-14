@@ -3,90 +3,99 @@ DROP DATABASE IF EXISTS elective_db;
 CREATE DATABASE IF NOT EXISTS elective_db;
 USE elective_db;
 
-DROP TABLE IF EXISTS registration;
-DROP TABLE IF EXISTS journal;
-DROP TABLE IF EXISTS course;
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS status;
-DROP TABLE IF EXISTS topic;
-DROP TABLE IF EXISTS role;
+-- topic definition
 
-CREATE TABLE topic (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(45) NOT NULL UNIQUE
+CREATE TABLE `topic` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
 );
 
-CREATE TABLE status (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	status VARCHAR(45) NOT NULL UNIQUE
+-- status definition
+
+CREATE TABLE `status` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `status` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `status` (`status`)
 );
 
-CREATE TABLE role (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(45) NOT NULL UNIQUE
+-- role definition
+
+CREATE TABLE `role` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
 );
 
-CREATE TABLE user (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	username VARCHAR(45) NOT NULL UNIQUE,
-	password VARCHAR(45) NOT NULL UNIQUE,
-	first_name VARCHAR(45) NOT NULL,
-	middle_name VARCHAR(45) NOT NULL,
-	last_name VARCHAR(45) NOT NULL,
-	email VARCHAR(45) NOT NULL UNIQUE,
-	role_id INT NOT NULL,
-	CONSTRAINT fk_user_role_id FOREIGN KEY (role_id)
-		REFERENCES role(id)
-		ON UPDATE CASCADE ON DELETE RESTRICT
+-- user definition
+
+CREATE TABLE `user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `first_name` varchar(45) NOT NULL,
+  `middle_name` varchar(45) NOT NULL,
+  `last_name` varchar(45) NOT NULL,
+  `email` varchar(45) NOT NULL,
+  `role_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `password` (`password`),
+  UNIQUE KEY `email` (`email`),
+  KEY `fk_user_role_id` (`role_id`),
+  CONSTRAINT `fk_user_role_id` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE TABLE course (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(45) NOT NULL UNIQUE,
-	duration VARCHAR(45) NOT NULL,
-	start_date DATETIME NOT NULL,
-	end_date DATETIME,
-	count_student INT UNSIGNED NOT NULL,
-	topic_id INT NOT NULL,
-	teacher_id INT NOT NULL,
-	status_id INT NOT NULL,
-	CONSTRAINT fk_course_topic_id FOREIGN KEY (topic_id)
-		REFERENCES topic(id)
-		ON UPDATE CASCADE ON DELETE RESTRICT,
-	CONSTRAINT fk_cource_status_id FOREIGN KEY (status_id)
-		REFERENCES status(id)
-		ON UPDATE CASCADE ON DELETE RESTRICT,
-	CONSTRAINT fk_cource_teacher_id FOREIGN KEY (teacher_id)
-		REFERENCES user(id)
-		ON UPDATE CASCADE ON DELETE RESTRICT
+-- course definition
+
+CREATE TABLE `course` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `duration` varchar(45) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `topic_id` int NOT NULL,
+  `teacher_id` int NOT NULL,
+  `status_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `fk_course_topic_id` (`topic_id`),
+  KEY `fk_cource_status_id` (`status_id`),
+  KEY `fk_cource_teacher_id` (`teacher_id`),
+  CONSTRAINT `fk_cource_status_id` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_cource_teacher_id` FOREIGN KEY (`teacher_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_course_topic_id` FOREIGN KEY (`topic_id`) REFERENCES `topic` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
-CREATE TABLE registration (
-	course_id INT,
-	student_id INT,
-	registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (course_id, student_id),
-	CONSTRAINT registration_course_id FOREIGN KEY (course_id)
-		REFERENCES course(id)
-		ON UPDATE CASCADE ON DELETE RESTRICT,
-	CONSTRAINT registration_student_id FOREIGN KEY (student_id)
-		REFERENCES user(id)
-		ON UPDATE CASCADE ON DELETE RESTRICT
+-- students_on_course definition
+
+CREATE TABLE `students_on_course` (
+  `course_id` int NOT NULL,
+  `count_student` int NOT NULL,
+  PRIMARY KEY (`course_id`),
+  UNIQUE KEY `course_id` (`course_id`),
+  CONSTRAINT `fk_students_on_course_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE journal (
-	teacher_id INT NOT NULL,
-	student_id INT NOT NULL,
-	course_id INT NOT NULL,
-	CONSTRAINT journal_teacher_id FOREIGN KEY (teacher_id)
-		REFERENCES user(id)
-		ON UPDATE CASCADE ON DELETE RESTRICT,
-	CONSTRAINT journal_student_id FOREIGN KEY (student_id)
-		REFERENCES user(id)
-		ON UPDATE CASCADE ON DELETE RESTRICT,
-	CONSTRAINT journal_course_id FOREIGN KEY (course_id)
-		REFERENCES course(id)
-		ON UPDATE CASCADE ON DELETE RESTRICT
+-- journal definition
+
+CREATE TABLE `journal` (
+  `course_id` int NOT NULL,
+  `student_id` int NOT NULL,
+  `registration_date` date NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `mark` int DEFAULT NULL,
+  `status_id` int NOT NULL,
+  PRIMARY KEY (`course_id`,`student_id`),
+  KEY `fk_journal_student_id` (`student_id`),
+  KEY `fk_journal_status_id` (`status_id`),
+  CONSTRAINT `fk_journal_status_id` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_journal_course_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_journal_student_id` FOREIGN KEY (`student_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- -----------------------------------------------------
@@ -94,49 +103,57 @@ CREATE TABLE journal (
 -- -----------------------------------------------------
 
 -- role
-INSERT INTO role (id, name) VALUES (DEFAULT, "admin");
-INSERT INTO role (id, name) VALUES (DEFAULT, "teacher");
-INSERT INTO role (id, name) VALUES (DEFAULT, "student");
-
--- topic
-INSERT INTO topic (id, name) VALUES (DEFAULT, "Java");
-INSERT INTO topic (id, name) VALUES (DEFAULT, "C++");
-INSERT INTO topic (id, name) VALUES (DEFAULT, "C");
-INSERT INTO topic (id, name) VALUES (DEFAULT, "Swift");
-INSERT INTO topic (id, name) VALUES (DEFAULT, "Database");
-INSERT INTO topic (id, name) VALUES (DEFAULT, "Algorithm");
-INSERT INTO topic (id, name) VALUES (DEFAULT, "Computer science");
+INSERT INTO role (id, name) VALUES (1, 'admin');
+INSERT INTO role (id, name) VALUES (3, 'student');
+INSERT INTO role (id, name) VALUES (2, 'teacher');
 
 -- status
-INSERT INTO status (id, status) VALUES (DEFAULT, "Not started");
-INSERT INTO status (id, status) VALUES (DEFAULT, "In progres");
-INSERT INTO status (id, status) VALUES (DEFAULT, "Finished");
+INSERT INTO status (id, status) VALUES (3, 'Finished');
+INSERT INTO status (id, status) VALUES (1, 'Open');
+INSERT INTO status (id, status) VALUES (2, 'Running');
+
+-- topic
+INSERT INTO topic (id, name) VALUES (4, 'Blockchain Technology');
+INSERT INTO topic (id, name) VALUES (1, 'Introduction to Web Development');
+INSERT INTO topic (id, name) VALUES (2, 'Mobile App Development');
+INSERT INTO topic (id, name) VALUES (3, 'Programming Fundamentals');
 
 -- user
--- admins
-SET @user_role = (SELECT id FROM role WHERE name="admin");
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "super_admin", "admin" , "Ivan", "Petrenko", "Pavlov", "pavlov.ivan@gmail.com", @user_role);
-
--- teachers
-SET @user_role = (SELECT id FROM role WHERE name="teacher");
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "teacher_1", "teacher_1" , "Margo", "Ivankova", "Robby", "margo.robby@gmail.com", @user_role);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "teacher_2", "teacher_2" , "Dima", "Petrov", "Dally", "dima.dally@gmail.com", @user_role);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "teacher_3", "teacher_3" , "Olga", "Koplenko", "Marino", "olga.marino@gmail.com", @user_role);
-
--- students
-SET @user_role = (SELECT id FROM role WHERE name="student");
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "student_1", "student_1" , "Maria", "E. Hoffmann", "Dorna", "maria.dorna@gmail.com", @user_role);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "student_2", "student_2" , "James", "M. Langston", "Hughes", "james.hughes@gmail.com", @user_role);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "student_3", "student_3" , "William", "Bradley", "Pitt", "william.pitt@gmail.com", @user_role);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "student_4", "student_4" , "Thomas", "Cruise", "Mapother", "thomas.mapother@gmail.com", @user_role);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "student_5", "student_5" , "Willard", "Carroll", "Smith", "willard.smith@gmail.com", @user_role);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "student_6", "student_6" , "Scarlett", "Ingrid", "Johansson", "scarlett.johansson@gmail.com", @user_role);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (DEFAULT, "student_7", "student_7" , "John", "Christopher", "Depp", "john.depp@gmail.com", @user_role);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (1, 'asmith-asmith', '5tG6#kL9@', 'Alice', 'Elizabeth', 'Smith', 'alice_smith@example.com', 3);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (2, 'sthompson-sthompson', '9pL6#mF7@', 'Sarah', 'Elizabeth', 'Thompson', 'sarah_thompson@example.com', 2);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (3, 'djackson-djackson', '3gT8$nJ5!', 'David', 'Alexander', 'Jackson', 'david.jackson@example.com', 2);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (4, 'jwhite-jwhite', '7kR4#fH2^', 'Julia', 'Marie', 'White', 'julia.white@example.com', 2);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (5, 'badams-badams', '4rM6#pK9@', 'Benjamin', 'Robert', 'Adams', 'benjamin_adams@example.com', 1);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (6, 'jjohnson-jjohnson', '7pM4$sK1%', 'John', 'Michael', 'Johnson', 'jjohnson@example.com', 3);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (7, 'edavis-edavis', '3dR8#nC2!', 'Emily', 'Jane', 'Davis', 'emily.davis@example.com', 3);
 
 -- course
-SET @teacher_id = (SELECT id FROM user WHERE username="teacher_1");
-INSERT INTO course (id, name, duration, start_date, end_date, count_student, topic_id, teacher_id, status_id) VALUES (DEFAULT, "SQL", "3 week" , "2022-12-14", "2023-01-04", 1, 5, @teacher_id, 2);
-SET @teacher_id = (SELECT id FROM user WHERE username="teacher_2");
-INSERT INTO course (id, name, duration, start_date, end_date, count_student, topic_id, teacher_id, status_id) VALUES (DEFAULT, "C++ for 21 days", "3 week" , "2022-11-23", "2022-12-14", 1, 2, @teacher_id, 3);
-SET @teacher_id = (SELECT id FROM user WHERE username="teacher_3");
-INSERT INTO course (id, name, duration, start_date, end_date, count_student, topic_id, teacher_id, status_id) VALUES (DEFAULT, "Java Basic", "3 week" , "2022-12-15", "2023-01-05", 1, 1, @teacher_id, 1);
+INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (1, 'Web Development Fundamentals', '4 weeks', '2023-05-01', '2023-05-28', 1, 2, 1);
+INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (2, 'JavaScript for Web Development', '6 weeks', '2023-07-03', '2023-08-13', 1, 2, 1);
+INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (3, 'HTML and CSS Basics', '2 weeks', '2023-06-05', '2023-06-18', 1, 2, 1);
+INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (4, 'Introduction to Mobile App Development', '4 weeks', '2023-05-01', '2023-05-29', 2, 3, 1);
+INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (5, 'Advanced Mobile App Development', '6 weeks', '2023-06-05', '2023-07-17', 2, 3, 1);
+INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (6, 'Introduction to Python Programming', '4 weeks', '2023-05-01', '2023-05-28', 3, 4, 1);
+INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (7, 'C++ Programming Essentials', '6 weeks', '2023-06-05', '2023-07-16', 3, 4, 1);
+INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (8, 'Java Fundamentals for Beginners', '8 weeks', '2023-08-07', '2023-09-29', 3, 4, 1);
+INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (9, 'Blockchain Fundamentals', '4 weeks', '2023-05-01', '2023-05-28', 4, 2, 1);
+INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (10, 'Blockchain for Business', '6 weeks', '2023-06-05', '2023-07-17', 4, 3, 1);
+
+-- journal
+INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (1, 1, '2023-04-04', '2023-05-01', '2023-05-28', NULL, 1);
+INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (1, 7, '2023-03-28', '2023-05-01', '2023-05-28', NULL, 1);
+INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (2, 7, '2023-03-29', '2023-07-03', '2023-08-13', NULL, 1);
+INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (3, 1, '2023-03-29', '2023-06-05', '2023-06-18', NULL, 1);
+INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (3, 6, '2023-03-28', '2023-06-05', '2023-06-18', NULL, 1);
+INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (4, 6, '2023-04-04', '2023-05-01', '2023-05-29', NULL, 1);
+INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (4, 7, '2023-03-31', '2023-05-01', '2023-05-29', NULL, 1);
+INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (6, 1, '2023-03-29', '2023-05-01', '2023-05-28', NULL, 1);
+INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (6, 6, '2023-03-29', '2023-05-01', '2023-05-28', NULL, 1);
+
+-- students_on_course
+INSERT INTO students_on_course (course_id, count_student) VALUES (1, 2);
+INSERT INTO students_on_course (course_id, count_student) VALUES (2, 1);
+INSERT INTO students_on_course (course_id, count_student) VALUES (3, 2);
+INSERT INTO students_on_course (course_id, count_student) VALUES (4, 2);
+INSERT INTO students_on_course (course_id, count_student) VALUES (6, 2);
+

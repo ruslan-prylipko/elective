@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,18 +23,29 @@ import com.my.entity.User;
 @WebServlet("/login")
 public class LoginController extends HttpServlet {
 	private static final Logger LOGGER = LogManager.getLogger();
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String emailOrUsername = req.getParameter("username");
 		String password = req.getParameter("password");
-		
+
 		User user;
 		try {
 			user = authenticate(emailOrUsername, password);
-			resp.getOutputStream().println("Hello" + " " + user);
+			HttpSession session = req.getSession();
+			session.setAttribute("userId", user.getId());
+			session.setAttribute("user", user);
+			switch (user.getRole()) {
+			case "student":
+				resp.sendRedirect("users/role/student.jsp");
+				break;
+			case "teacher":
+				break;
+			case "admin":
+				break;
+			}
 		} catch (IllegalArgumentException | SQLException | NamingException | LoginException e) {
 			LOGGER.error(e.getMessage());
 			LOGGER.debug(e);
@@ -52,14 +64,15 @@ public class LoginController extends HttpServlet {
 	 * User authenticate.
 	 * 
 	 * @param emailOrUsername - String type
-	 * @param password - String type
+	 * @param password        - String type
 	 * @return User object
 	 * @throws IllegalArgumentException
 	 * @throws SQLException
 	 * @throws NamingException
 	 * @throws LoginException
 	 */
-	private User authenticate(String emailOrUsername, String password) throws IllegalArgumentException, SQLException, NamingException, LoginException {
+	private User authenticate(String emailOrUsername, String password)
+			throws IllegalArgumentException, SQLException, NamingException, LoginException {
 		Login login = new Login();
 		User user = null;
 		try {
@@ -74,11 +87,11 @@ public class LoginController extends HttpServlet {
 			}
 			user = UserLogin.select(login);
 		} catch (IllegalArgumentException | SQLException | LoginException e) {
-			LOGGER.error(e.getMessage());	
-			LOGGER.debug(e);	
+			LOGGER.error(e.getMessage());
+			LOGGER.debug(e);
 			throw e;
-		}  
+		}
 		return user;
 	}
-	
+
 }

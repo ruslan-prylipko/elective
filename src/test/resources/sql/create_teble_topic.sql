@@ -1,4 +1,6 @@
-CREATE TABLE topic (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(45) NOT NULL UNIQUE
+CREATE TABLE `topic` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
 );

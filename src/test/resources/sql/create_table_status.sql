@@ -1,4 +1,6 @@
-CREATE TABLE status (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	status VARCHAR(45) NOT NULL UNIQUE
+CREATE TABLE `status` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `status` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `status` (`status`)
 );

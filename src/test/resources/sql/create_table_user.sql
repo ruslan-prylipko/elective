@@ -1,13 +1,16 @@
-CREATE TABLE user (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	username VARCHAR(45) NOT NULL UNIQUE,
-	password VARCHAR(45) NOT NULL UNIQUE,
-	first_name VARCHAR(45) NOT NULL,
-	middle_name VARCHAR(45) NOT NULL,
-	last_name VARCHAR(45) NOT NULL,
-	email VARCHAR(45) NOT NULL UNIQUE,
-	role_id INT NOT NULL,
-	CONSTRAINT fk_user_role_id FOREIGN KEY (role_id)
-		REFERENCES role(id)
-		ON UPDATE CASCADE ON DELETE RESTRICT
+CREATE TABLE `user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `first_name` varchar(45) NOT NULL,
+  `middle_name` varchar(45) NOT NULL,
+  `last_name` varchar(45) NOT NULL,
+  `email` varchar(45) NOT NULL,
+  `role_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `password` (`password`),
+  UNIQUE KEY `email` (`email`),
+  KEY `fk_user_role_id` (`role_id`),
+  CONSTRAINT `fk_user_role_id` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 );
