@@ -18,9 +18,9 @@ public class UtilDB {
 	private static final String DROP_TABLE_ROLE = "DROP TABLE IF EXISTS role;";
 
 	// insert role
-	private static final String INSERT_ROLE_ADMIN = "INSERT INTO role (id, name) VALUES (DEFAULT, \"admin\");";
-	private static final String INSERT_ROLE_TEACHER = "INSERT INTO role (id, name) VALUES (DEFAULT, \"teacher\");";
-	private static final String INSERT_ROLE_STUDENT = "INSERT INTO role (id, name) VALUES (DEFAULT, \"student\");";
+	private static final String INSERT_ROLE_ADMIN = "INSERT INTO role (id, name) VALUES (1, \"admin\");";
+	private static final String INSERT_ROLE_TEACHER = "INSERT INTO role (id, name) VALUES (3, \"teacher\");";
+	private static final String INSERT_ROLE_STUDENT = "INSERT INTO role (id, name) VALUES (2, \"student\");";
 	
 	/**
 	 * Creates tables in test database
@@ -79,6 +79,20 @@ public class UtilDB {
 	
 	public static Connection getConnection() throws SQLException, IOException {
 		return DriverManager.getConnection(load(Paths.get("src/test/resources/auth/db", "test-db.txt").toString()));
+	}
+	
+	public static void fillDataBase() throws IOException, SQLException {
+		Connection connection = DriverManager.getConnection(load(Paths.get("src/test/resources/auth/db", "test-db.txt").toString()));
+		Statement statement = connection.createStatement();
+		
+        try (BufferedReader reader = new BufferedReader(new FileReader(Paths.get("src/test/resources/sql", "fill-db.sql").toString()))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				statement.execute(line);
+			}
+		}
+        statement.close();
+		connection.close();
 	}
 	
 	private static String load(String path) throws IOException {

@@ -3,6 +3,7 @@ package com.my.entity;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 public class Course implements Serializable {
@@ -48,7 +49,7 @@ public class Course implements Serializable {
 	
 	public void setStartDate(Calendar startDate) {
 		this.startDate = startDate;
-		this.formatStartDate = getFormatStartDate("yyyy-MM-dd");
+		this.formatStartDate = getFormatDate("yyyy-MM-dd", startDate.getTime());
 	}
 	
 	public Calendar getEndDate() {
@@ -57,16 +58,19 @@ public class Course implements Serializable {
 	
 	public void setEndDate(Calendar endDate) {
 		this.endDate = endDate;
-		this.formatEndDate = getFormatEndtDate("yyyy-MM-dd");
+		this.formatEndDate = getFormatDate("yyyy-MM-dd", endDate.getTime());
 	}
 	
 	public String getFormatStartDate() {
 		return formatStartDate;
 	}
 	
-	public String getFormatStartDate(String pattern) {
+	public static String getFormatDate(String pattern, Date date) {
+		if (pattern.isBlank()) {
+			throw new IllegalArgumentException("Invalid date pattern!");
+		}
 		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-		return dateFormat.format(startDate.getTime());
+		return dateFormat.format(date);
 	}
 
 	public void setFormatStartDate(String formatStartDate) {
@@ -75,11 +79,6 @@ public class Course implements Serializable {
 
 	public String getFormatEndDate() {
 		return formatEndDate;
-	}
-	
-	public String getFormatEndtDate(String pattern) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-		return dateFormat.format(endDate.getTime());
 	}
 
 	public void setFormatEndDate(String formatEndDate) {

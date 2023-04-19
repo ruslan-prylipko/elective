@@ -1,6 +1,5 @@
 package com.my.entity;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -29,7 +28,7 @@ public class UserCourse extends Course {
 	
 	public void setRegistrationDate(Calendar registrationDate) {
 		this.registrationDate = registrationDate;
-		this.formatRegistrationDate = getFormatRegistrationDate("yyyy-MM-dd");
+		this.formatRegistrationDate = getFormatDate("yyyy-MM-dd", registrationDate.getTime());
 	}
 	
 	public void setFormatRegistrationDate(String formatRegistrationDate) {
@@ -38,11 +37,6 @@ public class UserCourse extends Course {
 	
 	public String getFormatRegistrationDate() {
 		return formatRegistrationDate;
-	}
-	
-	public String getFormatRegistrationDate(String pattern) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-		return dateFormat.format(registrationDate.getTime());
 	}
 	
 	public int getMark() {

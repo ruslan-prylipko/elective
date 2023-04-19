@@ -22,7 +22,7 @@ import com.my.entity.User;
 /**
  * For run this test class it's need to uncommented getDataSource() method in DataSourceConfig.java file.
  */
-public class UserLoginTest {
+class UserLoginTest {
 
 private static Connection connection = null;
 	
