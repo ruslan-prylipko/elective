@@ -28,12 +28,11 @@
 				<a href="/elective/student?courses=my">My</a>
 				<a href="/elective/student?courses=available">Available</a>
 			</div>
+			</div>
 			<div>
-			<!--<c:if test="${coursesList == null }" >
-				<p>No courses!</p>
-			</c:if>-->
-			<c:if test="${coursesList != null}">
+			<c:if test="${myCoursesList != null}">
 				<hr>
+				<h4>My</h4>
 				<table>
 					<thead>
 						<tr>
@@ -49,7 +48,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach var="course" items="${coursesList}">
+						<c:forEach var="course" items="${myCoursesList}">
 							<tr>
 								<td><c:out value="${course.name}"/></td>
 								<td><c:out value="${course.duration}"/></td>
@@ -66,6 +65,38 @@
 				</table>
 				</c:if>
 			</div>
+			<div>
+			<c:if test="${availableCoursesList != null}">
+				<hr>
+				<h4>Available</h4>
+				<table>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Duration</th>
+							<th>Start date</th>
+							<th>End date</th>
+							<th>Topic</th>
+							<th>Teacher</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach var="course" items="${availableCoursesList}">
+							<tr>
+								<td><c:out value="${course.name}"/></td>
+								<td><c:out value="${course.duration}"/></td>
+								<td><c:out value="${course.formatStartDate}"/></td>
+								<td><c:out value="${course.formatEndDate}"/></td>
+								<td><c:out value="${course.topic}"/></td>
+								<td><c:out value="${course.teacher}"/></td>
+								<td><c:out value="${course.status}"/></td>
+								<td><a href="">Registration</a></td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</c:if>
 		</div>
 	</div>
 </body>

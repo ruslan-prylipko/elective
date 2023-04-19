@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.my.entity.Course;
 import com.my.entity.UserCourse;
 import com.my.dao.course.CourseDAO;
 
@@ -22,17 +23,8 @@ public class StudentController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		String courses = req.getParameter("courses");
-		
 		try {
-			switch (courses) {
-			case "my":
-				getCoursesList(req, resp);
-				break;
-			case "available":
-				resp.getOutputStream().print(req.getServletPath());
-				break;
-			}
+			getCoursesList(req, resp);
 		} catch (IllegalArgumentException | SQLException | NamingException e) {
 			req.setAttribute("exception", e.getMessage());
 			try {
@@ -50,8 +42,15 @@ public class StudentController extends HttpServlet {
 	
 	private void getCoursesList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, NamingException, SQLException {
 		long userId = (Long)req.getSession(false).getAttribute("userId");
-		List<UserCourse> coursesList = CourseDAO.getUserCourses(userId);
-		req.setAttribute("coursesList", coursesList );
+		String courses = req.getParameter("courses");
+		if (courses.equalsIgnoreCase("my")) {
+			List<UserCourse> myCoursesList = CourseDAO.getUserCourses(userId);
+			req.setAttribute("myCoursesList", myCoursesList );
+		}
+		if (courses.equalsIgnoreCase("available")) {
+			List<Course> availableCoursesList = CourseDAO.getAvailableCourses(userId);
+			req.setAttribute("availableCoursesList", availableCoursesList );
+		}
 		RequestDispatcher dispatcher = req.getRequestDispatcher("users/role/student.jsp");
 		dispatcher.forward(req, resp);
 	}

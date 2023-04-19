@@ -39,6 +39,16 @@ class CourseDAOTest {
 		assertNotNull(CourseDAO.getUserCourses(7));	// userId = 7
 	}	
 	
+	@Test
+	void testGetAvailableCourses() throws NamingException, SQLException {
+		assertArrayEquals(CourseDAO.getAvailableCourses(7).toArray(), CourseDAO.getAvailableCourses(7).toArray());
+	}
+	
+	@Test
+	void testNotNullGetAvailableCourses() throws NamingException, SQLException {
+		assertNotNull(CourseDAO.getAvailableCourses(7));	// userId = 7
+	}
+	
 	@AfterAll
 	static void globalClean() throws SQLException, IOException {
 		connection.close();
