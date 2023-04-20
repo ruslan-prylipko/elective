@@ -70,16 +70,6 @@ CREATE TABLE `course` (
   CONSTRAINT `fk_course_topic_id` FOREIGN KEY (`topic_id`) REFERENCES `topic` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- students_on_course definition
-
-CREATE TABLE `students_on_course` (
-  `course_id` int NOT NULL,
-  `count_student` int NOT NULL,
-  PRIMARY KEY (`course_id`),
-  UNIQUE KEY `course_id` (`course_id`),
-  CONSTRAINT `fk_students_on_course_id` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 -- journal definition
 
 CREATE TABLE `journal` (
@@ -149,11 +139,4 @@ INSERT INTO journal (course_id, student_id, registration_date, start_date, end_d
 INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (4, 7, '2023-03-31', '2023-05-01', '2023-05-29', NULL, 1);
 INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (6, 1, '2023-03-29', '2023-05-01', '2023-05-28', NULL, 1);
 INSERT INTO journal (course_id, student_id, registration_date, start_date, end_date, mark, status_id) VALUES (6, 6, '2023-03-29', '2023-05-01', '2023-05-28', NULL, 1);
-
--- students_on_course
-INSERT INTO students_on_course (course_id, count_student) VALUES (1, 2);
-INSERT INTO students_on_course (course_id, count_student) VALUES (2, 1);
-INSERT INTO students_on_course (course_id, count_student) VALUES (3, 2);
-INSERT INTO students_on_course (course_id, count_student) VALUES (4, 2);
-INSERT INTO students_on_course (course_id, count_student) VALUES (6, 2);
 

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.my.entity.Course;
 import com.my.entity.UserCourse;
 import com.my.dao.course.CourseDAO;
+import com.my.dao.course.JournalDAO;
 
 @WebServlet("/student")
 public class StudentController extends HttpServlet {
@@ -24,7 +25,14 @@ public class StudentController extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 		try {
-			getCoursesList(req, resp);
+			if (req.getParameter("courses") != null) {
+				getCoursesList(req);
+			}
+			if (req.getParameter("reg") != null) {
+				registrationOnCourse(req);
+			}
+			RequestDispatcher dispatcher = req.getRequestDispatcher("users/role/student.jsp");
+			dispatcher.forward(req, resp);
 		} catch (IllegalArgumentException | SQLException | NamingException e) {
 			req.setAttribute("exception", e.getMessage());
 			try {
@@ -35,12 +43,15 @@ public class StudentController extends HttpServlet {
 		}
 	}
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
+	private void registrationOnCourse(HttpServletRequest req) throws SQLException {
+		long userId = (Long)req.getSession(false).getAttribute("userId");
+		long courseId = Long.parseLong(req.getParameter("reg"));
+		boolean flag = JournalDAO.registration(userId, courseId);
+		req.setAttribute("courseId", courseId);
+		req.setAttribute("regFlag", flag ? "Successful" : "Error");
 	}
 	
-	private void getCoursesList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, NamingException, SQLException {
+	private void getCoursesList(HttpServletRequest req) throws NamingException, SQLException {
 		long userId = (Long)req.getSession(false).getAttribute("userId");
 		String courses = req.getParameter("courses");
 		if (courses.equalsIgnoreCase("my")) {
@@ -51,8 +62,6 @@ public class StudentController extends HttpServlet {
 			List<Course> availableCoursesList = CourseDAO.getAvailableCourses(userId);
 			req.setAttribute("availableCoursesList", availableCoursesList );
 		}
-		RequestDispatcher dispatcher = req.getRequestDispatcher("users/role/student.jsp");
-		dispatcher.forward(req, resp);
 	}
 	
 }

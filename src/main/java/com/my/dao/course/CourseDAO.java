@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -134,6 +133,7 @@ public class CourseDAO {
 			coursesList = new ArrayList<>();
 			while (rs.next()) {
 				course = new Course();
+				course.setId(rs.getLong("id"));
 				course.setName(rs.getString("course_name"));
 				course.setDuration(rs.getString("duration"));
 				calendar = Calendar.getInstance();
