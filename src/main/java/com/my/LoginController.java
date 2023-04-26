@@ -42,6 +42,7 @@ public class LoginController extends HttpServlet {
 				resp.sendRedirect("users/role/student.jsp");
 				break;
 			case "teacher":
+				resp.sendRedirect("teacher");
 				break;
 			case "admin":
 				break;

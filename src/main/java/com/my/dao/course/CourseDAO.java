@@ -22,7 +22,7 @@ import com.my.entity.UserCourse;
 public class CourseDAO {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final String SELECT_USER_COURSES = 
-			"select course.name course_name, journal.student_id, "
+			"select course.id course_id, course.name course_name, journal.student_id, "
 			+ "course.duration, journal.registration_date, "
 			+ "journal.start_date, journal.end_date, "
 			+ "topic.name topic_name, user.first_name, "
@@ -75,6 +75,7 @@ public class CourseDAO {
 			while (rs.next()) {
 				userCourse = new UserCourse();
 				userCourse.setStudentId(rs.getLong("student_id"));
+				userCourse.setId(rs.getLong("course_id"));
 				userCourse.setName(rs.getString("course_name"));
 				userCourse.setDuration(rs.getString("duration"));
 				calendar = Calendar.getInstance();

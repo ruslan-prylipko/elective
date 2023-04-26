@@ -9,10 +9,18 @@ import java.util.Objects;
 public class UserCourse extends Course {
 	private static final long serialVersionUID = 5459985633402576626L;
 	private long studentId;
+	private User student;
 	private Calendar registrationDate;
 	private String formatRegistrationDate;
 	private int mark;
 	
+	public User getStudent() {
+		return student;
+	}
+
+	public void setStudent(User student) {
+		this.student = student;
+	}
 	
 	public long getStudentId() {
 		return studentId;

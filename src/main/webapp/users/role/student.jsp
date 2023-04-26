@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
-<%@ page import="com.my.entity.User"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,18 +8,7 @@
 <title>Student</title>
 </head>
 <body>
-	<%
-	User user = (User) session.getAttribute("user");
-	%>
-	<div>
-		<div><%=user.getUsername()%></div>
-		<div><%=user.getFirstName()%></div>
-		<div><%=user.getLastName()%></div>
-		<div><%=user.getMiddleName()%></div>
-		<div><%=user.getEmail()%></div>
-		<div><%=user.getRole()%></div>
-	</div>
-	<hr>
+	<jsp:include page="header.jsp"></jsp:include>
 	<div>
 		<div>
 			<div>
