@@ -29,7 +29,11 @@ public class RegistrationController extends HttpServlet {
 		try {
 			registrationData = getRegistrationData(req);
 			UserRegistration.insert(registrationData);
-			resp.sendRedirect("users/sign_in.jsp");
+			if (req.getParameter("role").equalsIgnoreCase("teacher")) {
+				resp.sendRedirect("users/role/admin.jsp");
+			} else {
+				resp.sendRedirect("users/sign_in.jsp");
+			}
 		} catch (IllegalArgumentException e) {
 			LOGGER.info(e.getMessage());
 			LOGGER.debug(e);
@@ -59,7 +63,7 @@ public class RegistrationController extends HttpServlet {
 		String middleName = req.getParameter("middle-name");
 		String lastName = req.getParameter("last-name");
 		String email = req.getParameter("email");
-		String password = req.getParameter("password");	// Later it's needed password hashing
+		String password = req.getParameter("password");
 		
 		checkData(username, firstName, middleName, lastName, email, password);
 		
@@ -68,7 +72,7 @@ public class RegistrationController extends HttpServlet {
 		user.setLastName(lastName);
 		user.setUsername(username);
 		user.setEmail(email);
-		user.setRole("student");	// this is a temporary field initialization
+		user.setRole(req.getParameter("role"));
 		
 		return new RegistrationData(user, password);
 	}

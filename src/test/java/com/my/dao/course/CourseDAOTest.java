@@ -1,8 +1,10 @@
 package com.my.dao.course;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -47,6 +49,18 @@ class CourseDAOTest {
 	@Test
 	void testNotNullGetAvailableCourses() throws NamingException, SQLException {
 		assertNotNull(CourseDAO.getAvailableCourses(7));	// userId = 7
+	}
+	
+	@Test
+	void testDeleteCourse() throws SQLException, NamingException {
+		assertFalse(CourseDAO.getAllCourses().stream().filter(p -> p.getId() == 10).findAny().isEmpty());
+		assertTrue(CourseDAO.deleteCourse(10));
+		assertTrue(CourseDAO.getAllCourses().stream().filter(p -> p.getId() == 10).findAny().isEmpty());
+	}
+	
+	@Test
+	void testGetAllCourses() throws NamingException, SQLException {
+		assertArrayEquals(CourseDAO.getAllCourses().toArray(), CourseDAO.getAllCourses().toArray());
 	}
 	
 	@AfterAll

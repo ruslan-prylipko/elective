@@ -45,6 +45,7 @@ public class LoginController extends HttpServlet {
 				resp.sendRedirect("teacher");
 				break;
 			case "admin":
+				resp.sendRedirect("users/role/admin.jsp");
 				break;
 			}
 		} catch (IllegalArgumentException | SQLException | NamingException | LoginException e) {
