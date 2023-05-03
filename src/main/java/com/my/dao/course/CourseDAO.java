@@ -1,9 +1,11 @@
 package com.my.dao.course;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,8 +59,52 @@ public class CourseDAO {
 	private static final String DELETE_COURSE_BY_ID = 
 			"DELETE FROM course WHERE id = ?;";
 	
+	private static final String INSERT_NEW_COURSE =
+			"INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id)"
+			+ "VALUES (default, ?, ?, ?, ?, ?, ?, ?)";
+	
 	private CourseDAO() {
 		
+	}
+	
+	public static long insertNewCourse(String courseName, String duration, 
+			Date startDate, Date endDate, long topicId, long teacherId, long statusId) throws SQLException {
+		long courseId = -1;
+		DataSource ds = null;
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			ds = DataSourceConfig.getDataSource();
+			connection = ds.getConnection();
+			statement = connection.prepareStatement(INSERT_NEW_COURSE, PreparedStatement.RETURN_GENERATED_KEYS);
+			statement.setString(1, courseName);
+			statement.setString(2, duration);
+			statement.setDate(3, startDate);
+			statement.setDate(4, endDate);
+			statement.setLong(5, topicId);
+			statement.setLong(6, teacherId);
+			statement.setLong(7, statusId);
+			int count = statement.executeUpdate();
+			if (count > 0) {
+				resultSet = statement.getGeneratedKeys();
+				if (resultSet.next()) {
+					courseId = resultSet.getLong(1);
+				}
+			}
+		} catch (SQLTimeoutException e) {
+			SQLTimeoutException ex = new SQLTimeoutException("Connection to database timed out!", e);
+			LOGGER.error(ex.getMessage());
+			LOGGER.debug(ex);
+			rollback(connection);
+		} catch (NamingException | SQLException e) {
+			rollback(connection);
+		} finally {
+			close(resultSet);
+			close(statement);
+			close(connection);
+		}
+		return courseId;
 	}
 	
 	/**
@@ -256,6 +302,17 @@ public class CourseDAO {
 			close(connection);
 		}
 		return flag;
+	}
+	
+	private static void rollback(Connection connection) throws SQLException {
+		try {
+			connection.rollback();
+		} catch (SQLException e) {
+			SQLException ex = new SQLException("Rollback exception!", e);
+			LOGGER.error(ex.getMessage());
+			LOGGER.debug(ex);
+			throw ex;
+		}
 	}
 	
 	private static void close(AutoCloseable resourse) {
