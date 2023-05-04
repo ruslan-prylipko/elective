@@ -22,6 +22,7 @@ import com.my.dao.course.StatusDAO;
 import com.my.dao.course.TopicDAO;
 import com.my.dao.data.TeacherDAO;
 import com.my.entity.Course;
+import com.my.entity.ShortCourse;
 import com.my.entity.Status;
 import com.my.entity.Topic;
 import com.my.entity.User;
@@ -34,6 +35,7 @@ public class AdminController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String action = req.getParameter("action");
+		boolean isNewCourse = Boolean.getBoolean(req.getParameter("isNewCourse"));
 
 		try {
 			switch (action) {
@@ -46,7 +48,9 @@ public class AdminController extends HttpServlet {
 				req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
 				break;
 			case "edit":
-				resp.getOutputStream().print(action);
+				editCourse(req);
+				getBaseInformation(req);
+				req.getRequestDispatcher("course/editcourse.jsp").forward(req, resp);
 				break;
 			case "delete":
 				deleteCourse(req);
@@ -58,9 +62,15 @@ public class AdminController extends HttpServlet {
 				req.getRequestDispatcher("course/editcourse.jsp").forward(req, resp);
 				break;
 			case "save":
-				addNewCourse(req);
-				getBaseInformation(req);
-				req.getRequestDispatcher("course/editcourse.jsp").forward(req, resp);
+				if (isNewCourse) {
+					addNewCourse(req);
+					getBaseInformation(req);
+					req.getRequestDispatcher("course/editcourse.jsp").forward(req, resp);
+				} else {
+					updateCourse(req);
+					getAllCourses(req);
+					req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
+				}
 				break;
 			}
 		} catch (ServletException | SQLException | IOException | NamingException e) {
@@ -77,6 +87,24 @@ public class AdminController extends HttpServlet {
 		}
 	}
 	
+	private void updateCourse(HttpServletRequest req) throws SQLException {
+		long courseId = Long.parseLong(req.getParameter("courseId"));
+		String courseName = req.getParameter("name");
+		String duration = req.getParameter("duration");
+		Date startDate = Date.valueOf(req.getParameter("start_date"));
+		Date endDate = Date.valueOf(req.getParameter("end_date"));
+		long topicId = Long.parseLong(req.getParameter("topic"));
+		long teacherId = Long.parseLong(req.getParameter("teacher"));
+		long statusId = Long.parseLong(req.getParameter("status"));
+		CourseDAO.updateCourse(courseId, courseName, duration, startDate, endDate, topicId, teacherId, statusId);
+	}
+
+	private void editCourse(HttpServletRequest req) throws NamingException, SQLException {
+		long courseId = Long.parseLong(req.getParameter("courseId"));
+		ShortCourse shortCourse = CourseDAO.getCourseById(courseId);
+		req.setAttribute("shortCourse", shortCourse);
+	}
+
 	private void addNewCourse(HttpServletRequest req) throws SQLException {
 		String courseName = req.getParameter("name");
 		String duration = req.getParameter("duration");

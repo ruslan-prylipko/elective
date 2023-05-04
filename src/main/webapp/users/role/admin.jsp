@@ -43,7 +43,7 @@
 								<td><c:out value="${course.topic}" /></td>
 								<td><c:out value="${course.teacher}" /></td>
 								<td><c:out value="${course.status}" /></td>
-								<td><a href="/elective/admin?action=edit">Edit</a></td>
+								<td><a href="/elective/admin?action=edit&courseId=<c:out value="${course.id}"/>">Edit</a></td>
 								<td><a href="/elective/admin?action=delete&courseId=<c:out value="${course.id}"/>">Delete</a></td>
 							</tr>
 						</c:forEach>

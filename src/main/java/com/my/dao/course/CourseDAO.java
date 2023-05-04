@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.my.db.DataSourceConfig;
 import com.my.entity.Course;
+import com.my.entity.ShortCourse;
 import com.my.entity.User;
 import com.my.entity.UserCourse;
 
@@ -61,7 +62,13 @@ public class CourseDAO {
 	
 	private static final String INSERT_NEW_COURSE =
 			"INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id)"
-			+ "VALUES (default, ?, ?, ?, ?, ?, ?, ?)";
+			+ "VALUES (default, ?, ?, ?, ?, ?, ?, ?);";
+	private static final String SELECT_COURSE_BY_ID =
+			"SELECT name course_name, duration, start_date, end_date, topic_id, teacher_id, status_id FROM course WHERE id = ?;";
+	private static final String UPDATE_COURSE =
+			"UPDATE course SET name = ?, duration = ?, start_date = ?, end_date = ?, topic_id = ?, "
+			+ "teacher_id = ?, status_id = ? "
+			+ "WHERE id = ?;";
 	
 	private CourseDAO() {
 		
@@ -223,6 +230,53 @@ public class CourseDAO {
 	}
 	
 	/**
+	 * Returns {@code ShortCourse} object. Object represent short information
+	 * about course.
+	 * 
+	 * @param courseId
+	 * @return {@code ShortCourse} object
+	 * @throws NamingException
+	 * @throws SQLException
+	 */
+	public static ShortCourse getCourseById(long courseId) throws NamingException, SQLException {
+		ShortCourse course = null;
+		Calendar calendar = null;
+		DataSource dataSource = null;
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet rs = null;
+		try {
+			dataSource = DataSourceConfig.getDataSource();
+			connection = dataSource.getConnection();
+			statement = connection.prepareStatement(SELECT_COURSE_BY_ID);
+			statement.setLong(1, courseId);
+			rs = statement.executeQuery();
+			if (rs.next()) {
+				course = new ShortCourse();
+				course.setId(courseId);
+				course.setName(rs.getString("course_name"));
+				course.setDuration(rs.getString("duration"));
+				calendar = Calendar.getInstance();
+				calendar.setTime(rs.getDate("start_date"));
+				course.setStartDate(calendar);
+				calendar = Calendar.getInstance();
+				calendar.setTime(rs.getDate("end_date"));
+				course.setEndDate(calendar);
+				course.setTopicId(rs.getLong("topic_id"));
+				course.setTeacherId(rs.getLong("teacher_id"));
+				course.setStatusId(rs.getLong("status_id"));
+			}
+		} catch (NamingException | SQLException e) {
+			throw e;
+		} finally {
+			close(rs);
+			close(statement);
+			close(connection);
+		}
+		return course;
+	}
+	
+	/**
 	 * Returns list of all courses.
 	 * 
 	 * @return {@code List<Course>}
@@ -325,6 +379,42 @@ public class CourseDAO {
 				LOGGER.debug(ex);
 			}
 		}
+	}
+
+	public static boolean updateCourse(long courseId, String courseName, String duration,
+			Date startDate, Date endDate, long topicId, long teacherId, long statusId) throws SQLException {
+		boolean regFlag = false;
+		DataSource ds = null;
+		Connection connection = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			ds = DataSourceConfig.getDataSource();
+			connection = ds.getConnection();
+			statement = connection.prepareStatement(UPDATE_COURSE);
+			statement.setString(1, courseName);
+			statement.setString(2, duration);
+			statement.setDate(3, startDate);
+			statement.setDate(4, endDate);
+			statement.setLong(5, topicId);
+			statement.setLong(6, teacherId);
+			statement.setLong(7, statusId);
+			statement.setLong(8, courseId);
+			statement.executeUpdate();
+			regFlag = true;
+		} catch (SQLTimeoutException e) {
+			SQLTimeoutException ex = new SQLTimeoutException("Connection to database timed out!", e);
+			LOGGER.error(ex.getMessage());
+			LOGGER.debug(ex);
+			rollback(connection);
+		} catch (NamingException | SQLException e) {
+			rollback(connection);
+		} finally {
+			close(resultSet);
+			close(statement);
+			close(connection);
+		}
+		return regFlag;
 	}
 
 }
