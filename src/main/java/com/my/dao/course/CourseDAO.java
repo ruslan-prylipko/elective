@@ -74,6 +74,19 @@ public class CourseDAO {
 		
 	}
 	
+	/**
+	 * Inserts new course into DB.
+	 * 
+	 * @param courseName
+	 * @param duration
+	 * @param startDate
+	 * @param endDate
+	 * @param topicId
+	 * @param teacherId
+	 * @param statusId
+	 * @return if inserts was successful - {@code courseId}, otherwise -1.
+	 * @throws SQLException
+	 */
 	public static long insertNewCourse(String courseName, String duration, 
 			Date startDate, Date endDate, long topicId, long teacherId, long statusId) throws SQLException {
 		long courseId = -1;
@@ -381,6 +394,20 @@ public class CourseDAO {
 		}
 	}
 
+	/**
+	 * Updates existing course.
+	 * 
+	 * @param courseId
+	 * @param courseName
+	 * @param duration
+	 * @param startDate
+	 * @param endDate
+	 * @param topicId
+	 * @param teacherId
+	 * @param statusId
+	 * @return {@code true} if update was successful, otherwise {@code false} 
+	 * @throws SQLException
+	 */
 	public static boolean updateCourse(long courseId, String courseName, String duration,
 			Date startDate, Date endDate, long topicId, long teacherId, long statusId) throws SQLException {
 		boolean regFlag = false;
