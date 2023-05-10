@@ -21,11 +21,21 @@ public class TeacherController extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
 		try {
+			if (req.getSession(false) == null) {
+				throw new NullPointerException();
+			}
 			setMark(req, resp);
 			doGet(req, resp);
 		} catch (ServletException | IOException e) {
 			throw e;
+		} catch (NullPointerException e) {
+			try {
+				resp.sendRedirect(req.getContextPath() + "/users/sign_in.jsp");
+			} catch (IOException ex) {
+				throw ex;
+			}
 		}
 	}
 
@@ -52,6 +62,9 @@ public class TeacherController extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		try {
+			if (req.getSession(false) == null) {
+				throw new NullPointerException();
+			}
 			getCoursesList(req);
 			RequestDispatcher dispatcher = req.getRequestDispatcher("users/role/teacher.jsp");
 			dispatcher.forward(req, resp);
@@ -62,10 +75,16 @@ public class TeacherController extends HttpServlet {
 			} catch (ServletException | IOException ex) {
 				throw ex;
 			}
+		} catch (NullPointerException e) {
+			try {
+				resp.sendRedirect(req.getContextPath() + "/users/sign_in.jsp");
+			} catch (IOException ex) {
+				throw ex;
+			}
 		}
 	}
 
-	private void getCoursesList(HttpServletRequest req) throws NamingException, SQLException {
+	private void getCoursesList(HttpServletRequest req) throws NamingException, SQLException, NullPointerException {
 		long userId = (Long) req.getSession(false).getAttribute("userId");
 		List<UserCourse> coursesList = JournalDAO.getTeacherCourses(userId);
 		req.setAttribute("coursesList", coursesList);

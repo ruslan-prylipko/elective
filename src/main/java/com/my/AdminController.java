@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,9 +36,10 @@ public class AdminController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
 		String action = req.getParameter("action");
 		boolean isNewCourse = Boolean.getBoolean(req.getParameter("isNewCourse"));
-
+		
 		try {
 			switch (action) {
 			case "teacherReg":
@@ -45,43 +47,35 @@ public class AdminController extends HttpServlet {
 				req.getRequestDispatcher("users/sign_up.jsp").forward(req, resp);
 				break;
 			case "getAllStudents":
-				getAllStudents(req);
-				req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
+				getAllStudents(req, resp);
 				break;
 			case "getAllCourses":
-				getAllCourses(req);
-				req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
+				getAllCourses(req, resp);
 				break;
 			case "edit":
 				editCourse(req);
-				getBaseInformation(req);
-				req.getRequestDispatcher("course/editcourse.jsp").forward(req, resp);
+				getBaseInformation(req, resp);
 				break;
 			case "delete":
 				deleteCourse(req);
-				getAllCourses(req);
-				req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
+				getAllCourses(req, resp);
 				break;
 			case "addCourse":
-				getBaseInformation(req);
-				req.getRequestDispatcher("course/editcourse.jsp").forward(req, resp);
+				getBaseInformation(req, resp);
 				break;
 			case "save":
 				if (isNewCourse) {
 					addNewCourse(req);
-					getBaseInformation(req);
-					req.getRequestDispatcher("course/editcourse.jsp").forward(req, resp);
+					getBaseInformation(req, resp);
 				} else {
 					updateCourse(req);
-					getAllCourses(req);
-					req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
+					getAllCourses(req, resp);
 				}
 				break;
 			case "locked":
 			case "unlocked":
 				changeStatus(req);
-				getAllStudents(req);
-				req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
+				getAllStudents(req, resp);
 				break;
 			}
 		} catch (ServletException | SQLException | IOException | NamingException e) {
@@ -106,9 +100,10 @@ public class AdminController extends HttpServlet {
 		req.setAttribute("studentIdFlag", userId);
 	}
 
-	private void getAllStudents(HttpServletRequest req) throws SQLException, NamingException {
+	private void getAllStudents(HttpServletRequest req, HttpServletResponse resp) throws SQLException, NamingException, ServletException, IOException {
 		List<User> allStudents = StudentDAO.getStudents();
 		req.setAttribute("allStudents", allStudents);
+		req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
 	}
 
 	private void updateCourse(HttpServletRequest req) throws SQLException {
@@ -146,13 +141,14 @@ public class AdminController extends HttpServlet {
 		doGet(req, resp);
 	}
 
-	private void getBaseInformation(HttpServletRequest req) throws NamingException, SQLException {
+	private void getBaseInformation(HttpServletRequest req, HttpServletResponse resp) throws NamingException, SQLException, ServletException, IOException {
 		List<Topic> topicList = TopicDAO.getTopics();
 		List<User> teacherList = TeacherDAO.getTeachers();
 		List<Status> statusList = StatusDAO.getStatuses();
 		req.setAttribute("topicList", topicList);
 		req.setAttribute("teacherList", teacherList);
 		req.setAttribute("statusList", statusList);
+		req.getRequestDispatcher("course/editcourse.jsp").forward(req, resp);
 	}
 
 	private void deleteCourse(HttpServletRequest req) throws SQLException, NamingException {
@@ -160,9 +156,10 @@ public class AdminController extends HttpServlet {
 		CourseDAO.deleteCourse(courseId);		
 	}
 
-	private void getAllCourses(HttpServletRequest req) throws NamingException, SQLException {
+	private void getAllCourses(HttpServletRequest req, HttpServletResponse resp) throws NamingException, SQLException, ServletException, IOException {
 		List<Course> allCourses = CourseDAO.getAllCourses();
 		req.setAttribute("allCourses", allCourses);
+		req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
 	}
 
 }

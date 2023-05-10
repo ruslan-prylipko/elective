@@ -23,7 +23,7 @@ public class StudentController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
+
 		try {
 			if (req.getParameter("courses") != null) {
 				getCoursesList(req);
@@ -40,28 +40,34 @@ public class StudentController extends HttpServlet {
 			} catch (ServletException | IOException ex) {
 				throw ex;
 			}
+		} catch (NullPointerException e) {
+			try {
+				resp.sendRedirect(req.getContextPath() + "/users/sign_in.jsp");
+			} catch (IOException ex) {
+				throw ex;
+			}
 		}
 	}
 
 	private void registrationOnCourse(HttpServletRequest req) throws SQLException {
-		long userId = (Long)req.getSession(false).getAttribute("userId");
+		long userId = (Long) req.getSession(false).getAttribute("userId");
 		long courseId = Long.parseLong(req.getParameter("reg"));
 		boolean flag = JournalDAO.registration(userId, courseId);
 		req.setAttribute("courseId", courseId);
 		req.setAttribute("regFlag", flag ? "Successful" : "Error");
 	}
-	
-	private void getCoursesList(HttpServletRequest req) throws NamingException, SQLException {
-		long userId = (Long)req.getSession(false).getAttribute("userId");
+
+	private void getCoursesList(HttpServletRequest req) throws NamingException, SQLException, NullPointerException {
+		long userId = (Long) req.getSession(false).getAttribute("userId");
 		String courses = req.getParameter("courses");
 		if (courses.equalsIgnoreCase("my")) {
 			List<UserCourse> myCoursesList = CourseDAO.getUserCourses(userId);
-			req.setAttribute("myCoursesList", myCoursesList );
+			req.setAttribute("myCoursesList", myCoursesList);
 		}
 		if (courses.equalsIgnoreCase("available")) {
 			List<Course> availableCoursesList = CourseDAO.getAvailableCourses(userId);
-			req.setAttribute("availableCoursesList", availableCoursesList );
+			req.setAttribute("availableCoursesList", availableCoursesList);
 		}
 	}
-	
+
 }

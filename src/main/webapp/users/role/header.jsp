@@ -11,5 +11,10 @@
 		<div><%=user.getEmail()%></div>
 		<div><%=user.getRole()%></div>
 	</div>
+	<div>
+		<form action=<%=request.getContextPath() + "/login"%> method="get">
+			<button value="logout" name="action">Sign out</button>
+		</form>
+	</div>
 	<hr>
 </div>
