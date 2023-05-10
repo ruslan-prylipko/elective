@@ -21,9 +21,9 @@ public class UserRegistration {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	private static final String USER_INSERT = "INSERT INTO "
-			+ "user (id, username, password, first_name, middle_name, last_name, email, role_id) "
+			+ "user (id, username, password, first_name, middle_name, last_name, email, role_id, user_status_id) "
 			+ "VALUES "
-			+ "(DEFAULT, ?, ?, ?, ?, ?, ?, (SELECT id FROM role WHERE name=?));";
+			+ "(DEFAULT, ?, ?, ?, ?, ?, ?, (SELECT id FROM role WHERE name=?), (SELECT id FROM user_status WHERE name=?));";
 	
 	private UserRegistration() {
 		
@@ -46,6 +46,7 @@ public class UserRegistration {
 			statement.setString(5, user.getLastName());
 			statement.setString(6, user.getEmail());
 			statement.setString(7, user.getRole());
+			statement.setString(8, user.getStatus());
 			int count = statement.executeUpdate();
 			if (count > 0) {
 				resultSet = statement.getGeneratedKeys();

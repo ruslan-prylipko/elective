@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import com.my.dao.course.CourseDAO;
 import com.my.dao.course.StatusDAO;
 import com.my.dao.course.TopicDAO;
+import com.my.dao.data.StudentDAO;
 import com.my.dao.data.TeacherDAO;
 import com.my.entity.Course;
 import com.my.entity.ShortCourse;
@@ -42,6 +43,10 @@ public class AdminController extends HttpServlet {
 			case "teacherReg":
 				req.setAttribute("adminPage", true);
 				req.getRequestDispatcher("users/sign_up.jsp").forward(req, resp);
+				break;
+			case "getAllStudents":
+				getAllStudents(req);
+				req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
 				break;
 			case "getAllCourses":
 				getAllCourses(req);
@@ -72,6 +77,12 @@ public class AdminController extends HttpServlet {
 					req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
 				}
 				break;
+			case "locked":
+			case "unlocked":
+				changeStatus(req);
+				getAllStudents(req);
+				req.getRequestDispatcher("users/role/admin.jsp").forward(req, resp);
+				break;
 			}
 		} catch (ServletException | SQLException | IOException | NamingException e) {
 			LOGGER.error(e.getMessage());
@@ -86,7 +97,20 @@ public class AdminController extends HttpServlet {
 			}
 		}
 	}
-	
+
+	private void changeStatus(HttpServletRequest req) throws SQLException {
+		long userId = Long.parseLong(req.getParameter("studentId"));
+		String toStatus = req.getParameter("action");
+		boolean statusFlag = StudentDAO.changeStatus(userId, toStatus);
+		req.setAttribute("statusFlag", statusFlag);
+		req.setAttribute("studentIdFlag", userId);
+	}
+
+	private void getAllStudents(HttpServletRequest req) throws SQLException, NamingException {
+		List<User> allStudents = StudentDAO.getStudents();
+		req.setAttribute("allStudents", allStudents);
+	}
+
 	private void updateCourse(HttpServletRequest req) throws SQLException {
 		long courseId = Long.parseLong(req.getParameter("courseId"));
 		String courseName = req.getParameter("name");

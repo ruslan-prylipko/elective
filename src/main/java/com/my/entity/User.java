@@ -12,6 +12,7 @@ public class User implements Serializable {
 	private String lastName;
 	private String email;
 	private String role;
+	private String status;
 	
 	public long getId() {
 		return id;
@@ -69,6 +70,14 @@ public class User implements Serializable {
 		this.role = role;
 	}
 	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	public boolean isEmpty() {
 		if (id == 0 && username == null && firstName == null && middleName == null && lastName == null && email == null && role == null) {
 			return true;

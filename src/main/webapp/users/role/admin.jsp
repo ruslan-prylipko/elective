@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="UTF-8">
 <title>Admin</title>
 </head>
 <body>
@@ -14,7 +14,7 @@
 			<ul>
 				<li><a href="/elective/admin?action=teacherReg">Teacher registration</a></li>
 				<li><a href="/elective/admin?action=getAllCourses">Course management</a></li>
-				<li><a href="">Student management</a></li>
+				<li><a href="/elective/admin?action=getAllStudents">Student management</a></li>
 			</ul>
 		</div>
 		<div>
@@ -54,6 +54,9 @@
 						<button value="addCourse" name="action">Add course</button>
 					</form>
 				</div>
+			</c:if>
+			<c:if test="${allStudents != null}">
+				<jsp:include page="../manager/usermanager.jsp"></jsp:include>
 			</c:if>
 		</div>
 	</div>

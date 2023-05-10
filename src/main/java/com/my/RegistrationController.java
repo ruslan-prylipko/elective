@@ -73,6 +73,7 @@ public class RegistrationController extends HttpServlet {
 		user.setUsername(username);
 		user.setEmail(email);
 		user.setRole(req.getParameter("role"));
+		user.setStatus("unlocked");
 		
 		return new RegistrationData(user, password);
 	}

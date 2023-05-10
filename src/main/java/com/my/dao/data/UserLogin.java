@@ -20,14 +20,16 @@ public class UserLogin {
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	private static final String SELECT_USER_BY_USENAME = 
-			"SELECT user.id, user.username, user.first_name, user.middle_name, user.last_name, user.email, role.name "
+			"SELECT user.id, user.username, user.first_name, user.middle_name, user.last_name, user.email, role.name, user_status.name status "
 			+ "FROM user "
 			+ "LEFT JOIN role ON user.role_id=role.id "
+			+ "LEFT JOIN user_status ON user.user_status_id = user_status.id "
 			+ "WHERE user.username = ? AND user.password = ?;";
 	private static final String SELECT_USER_BY_EMAIL = 
-			"SELECT user.id, user.username, user.first_name, user.middle_name, user.last_name, user.email, role.name "
+			"SELECT user.id, user.username, user.first_name, user.middle_name, user.last_name, user.email, role.name, user_status.name status "
 			+ "FROM user "
 			+ "LEFT JOIN role ON user.role_id=role.id "
+			+ "LEFT JOIN user_status ON user.user_status_id = user_status.id "
 			+ "WHERE user.email = ? AND user.password = ?;";
 
 	private UserLogin () {
@@ -70,9 +72,14 @@ public class UserLogin {
 				user.setLastName(rs.getString("last_name"));
 				user.setEmail(rs.getString("email"));
 				user.setRole(rs.getString("name"));
+				user.setStatus(rs.getString("status"));
 			}
 			if (user.isEmpty()) {
 				throw new LoginException("Wrong data to log in!");
+			}
+			if (user.getStatus().equalsIgnoreCase("locked")) {
+				throw new LoginException("Your account was locked.\n"
+						+ "Please, contact to support service for solution this issue by email support@example.com.\n");
 			}
 		} catch (SQLTimeoutException e) {
 			SQLTimeoutException ex = new SQLTimeoutException("Connection to database timed out!", e);
