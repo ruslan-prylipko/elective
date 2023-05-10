@@ -16,6 +16,7 @@ public class UtilDB {
 	private static final String DROP_TABLE_STATUS = "DROP TABLE IF EXISTS status;";
 	private static final String DROP_TABLE_TOPIC = "DROP TABLE IF EXISTS topic;";
 	private static final String DROP_TABLE_ROLE = "DROP TABLE IF EXISTS role;";
+	private static final String DROP_TABLE_USER_STATUS = "DROP TABLE IF EXISTS user_status;";
 
 	// insert role
 	private static final String INSERT_ROLE_ADMIN = "INSERT INTO role (id, name) VALUES (1, \"admin\");";
@@ -34,6 +35,7 @@ public class UtilDB {
 		statement.execute(load(Paths.get("src/test/resources/sql", "create_teble_topic.sql").toString()));
 		statement.execute(load(Paths.get("src/test/resources/sql", "create_table_status.sql").toString()));
 		statement.execute(load(Paths.get("src/test/resources/sql", "create_table_role.sql").toString()));
+		statement.execute(load(Paths.get("src/test/resources/sql", "create_table_user_status.sql").toString()));
 		statement.execute(load(Paths.get("src/test/resources/sql", "create_table_user.sql").toString()));
 		statement.execute(load(Paths.get("src/test/resources/sql", "create_table_course.sql").toString()));
         statement.execute(load(Paths.get("src/test/resources/sql", "create_table_journal.sql").toString()));
@@ -56,6 +58,7 @@ public class UtilDB {
 		statement.execute(DROP_TABLE_STATUS);
 		statement.execute(DROP_TABLE_TOPIC);
 		statement.execute(DROP_TABLE_ROLE);
+		statement.execute(DROP_TABLE_USER_STATUS);
 		statement.close();
 		connection.close();		
 	}

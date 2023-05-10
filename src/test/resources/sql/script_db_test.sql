@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS elective_db_test;
+DROP DATABASE IF EXISTS elective_db;
 
-CREATE DATABASE IF NOT EXISTS elective_db_test;
-USE elective_db_test;
+CREATE DATABASE IF NOT EXISTS elective_db;
+USE elective_db;
 
 -- topic definition
 
@@ -30,6 +30,15 @@ CREATE TABLE `role` (
   UNIQUE KEY `name` (`name`)
 );
 
+-- user_status definition
+
+CREATE TABLE `user_status` (
+	`id` int NOT NULL AUTO_INCREMENT,
+	`name` varchar(45) NOT NULL,
+	PRIMARY KEY (`id`),
+  	UNIQUE KEY `name` (`name`)
+);
+
 -- user definition
 
 CREATE TABLE `user` (
@@ -41,12 +50,15 @@ CREATE TABLE `user` (
   `last_name` varchar(45) NOT NULL,
   `email` varchar(45) NOT NULL,
   `role_id` int NOT NULL,
+  `user_status_id` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `password` (`password`),
   UNIQUE KEY `email` (`email`),
   KEY `fk_user_role_id` (`role_id`),
-  CONSTRAINT `fk_user_role_id` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+  KEY `fk_user_status_id` (`user_status_id`),
+  CONSTRAINT `fk_user_role_id` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_user_status_id` FOREIGN KEY (`user_status_id`) REFERENCES `user_status` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- course definition
@@ -92,6 +104,10 @@ CREATE TABLE `journal` (
 -- Inserts
 -- -----------------------------------------------------
 
+-- user_status
+INSERT INTO user_status (id, name) VALUES (1, 'unlocked');
+INSERT INTO user_status (id, name) VALUES (2, 'locked');
+
 -- role
 INSERT INTO role (id, name) VALUES (1, 'admin');
 INSERT INTO role (id, name) VALUES (3, 'student');
@@ -109,13 +125,13 @@ INSERT INTO topic (id, name) VALUES (2, 'Mobile App Development');
 INSERT INTO topic (id, name) VALUES (3, 'Programming Fundamentals');
 
 -- user
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (1, 'asmith-asmith', '5tG6#kL9@', 'Alice', 'Elizabeth', 'Smith', 'alice_smith@example.com', 3);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (2, 'sthompson-sthompson', '9pL6#mF7@', 'Sarah', 'Elizabeth', 'Thompson', 'sarah_thompson@example.com', 2);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (3, 'djackson-djackson', '3gT8$nJ5!', 'David', 'Alexander', 'Jackson', 'david.jackson@example.com', 2);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (4, 'jwhite-jwhite', '7kR4#fH2^', 'Julia', 'Marie', 'White', 'julia.white@example.com', 2);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (5, 'badams-badams', '4rM6#pK9@', 'Benjamin', 'Robert', 'Adams', 'benjamin_adams@example.com', 1);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (6, 'jjohnson-jjohnson', '7pM4$sK1%', 'John', 'Michael', 'Johnson', 'jjohnson@example.com', 3);
-INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id) VALUES (7, 'edavis-edavis', '3dR8#nC2!', 'Emily', 'Jane', 'Davis', 'emily.davis@example.com', 3);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id, user_status_id) VALUES (1, 'asmith-asmith', '5tG6#kL9@', 'Alice', 'Elizabeth', 'Smith', 'alice_smith@example.com', 3, 1);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id, user_status_id) VALUES (2, 'sthompson-sthompson', '9pL6#mF7@', 'Sarah', 'Elizabeth', 'Thompson', 'sarah_thompson@example.com', 2, 1);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id, user_status_id) VALUES (3, 'djackson-djackson', '3gT8$nJ5!', 'David', 'Alexander', 'Jackson', 'david.jackson@example.com', 2, 1);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id, user_status_id) VALUES (4, 'jwhite-jwhite', '7kR4#fH2^', 'Julia', 'Marie', 'White', 'julia.white@example.com', 2, 1);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id, user_status_id) VALUES (5, 'badams-badams', '4rM6#pK9@', 'Benjamin', 'Robert', 'Adams', 'benjamin_adams@example.com', 1, 1);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id, user_status_id) VALUES (6, 'jjohnson-jjohnson', '7pM4$sK1%', 'John', 'Michael', 'Johnson', 'jjohnson@example.com', 3, 1);
+INSERT INTO user (id, username, password, first_name, middle_name, last_name, email, role_id, user_status_id) VALUES (7, 'edavis-edavis', '3dR8#nC2!', 'Emily', 'Jane', 'Davis', 'emily.davis@example.com', 3, 1);
 
 -- course
 INSERT INTO course (id, name, duration, start_date, end_date, topic_id, teacher_id, status_id) VALUES (1, 'Web Development Fundamentals', '4 weeks', '2023-05-01', '2023-05-28', 1, 2, 1);
