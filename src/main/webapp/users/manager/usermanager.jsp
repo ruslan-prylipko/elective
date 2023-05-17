@@ -1,14 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 <div>
-	<hr>
-	<h4>All students</h4>
-	<table>
+	<h4 class="text-header">All students</h4>
+	<table class="table">
 		<thead>
 			<tr>
 				<th>Username</th>
 				<th>Full name</th>
 				<th>Email</th>
 				<th>Status</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -27,9 +27,9 @@
 							href="/elective/admin?action=unlocked&studentId=<c:out value="${student.id}"/>">Unlock</a></td>
 					</c:if>
 					<c:if test="${student.id == studentIdFlag}">
-						<c:if test="${statusFlag}">
+						<!--<c:if test="${statusFlag}">
 							<td><c:out value="${statusFlag}" /></td>
-						</c:if>
+						</c:if>-->
 					</c:if>
 				</tr>
 			</c:forEach>

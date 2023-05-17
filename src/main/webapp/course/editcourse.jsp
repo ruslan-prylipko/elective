@@ -6,27 +6,28 @@
 <head>
 <meta charset="UTF-8">
 <title>Add/Edit Course</title>
+<link rel="stylesheet" href=<%=request.getContextPath() + "/users/role/css/main.css"%>>
 </head>
 <body>
-	<div>
+	<div class="edit-course-box">
 		<form action="/elective/admin" method="post">
-			<div>
+			<div class="edit-input-form">
 				<div>
 					<label>Name</label>
 					<p>
 						<c:if test="${shortCourse == null}">
-							<input name="name" required="required"
+							<input class="edit-input-item" name="name" required="required"
 								title="This field is required" type="text" />
 						</c:if>
 						<c:if test="${shortCourse != null}">
-							<input value="<c:out value="${shortCourse.name}"/>" name="name"
+							<input class="edit-input-item" value="<c:out value="${shortCourse.name}"/>" name="name"
 								required="required" title="This field is required" type="text" />
 						</c:if>
 				</div>
 				<div>
 					<label>Duration</label>
 					<p>
-						<select name="duration" required="required">
+						<select  class="edit-input-item" name="duration" required="required">
 							<c:if test="${shortCourse == null}">
 								<option value="">Select item</option>
 							</c:if>
@@ -53,11 +54,11 @@
 						<label>Start</label>
 						<p>
 							<c:if test="${shortCourse == null}">
-								<input name="start_date" type="date" required="required"
+								<input class="edit-input-item" name="start_date" type="date" required="required"
 									title="This field is required" />
 							</c:if>
 							<c:if test="${shortCourse != null}">
-								<input value="<c:out value="${shortCourse.startDate}"/>"
+								<input class="edit-input-item" value="<c:out value="${shortCourse.startDate}"/>"
 									name="start_date" type="date" required="required"
 									title="This field is required" />
 							</c:if>
@@ -66,11 +67,11 @@
 						<label>End</label>
 						<p>
 							<c:if test="${shortCourse == null}">
-								<input name="end_date" type="date" required="required"
+								<input class="edit-input-item" name="end_date" type="date" required="required"
 									title="This field is required" />
 							</c:if>
 							<c:if test="${shortCourse != null}">
-								<input value="<c:out value="${shortCourse.endDate}"/>"
+								<input class="edit-input-item" value="<c:out value="${shortCourse.endDate}"/>"
 									name="end_date" type="date" required="required"
 									title="This field is required" />
 							</c:if>
@@ -79,7 +80,7 @@
 				<div>
 					<label>Topic</label>
 					<p>
-						<select name="topic" required="required">
+						<select class="edit-input-item" name="topic" required="required">
 							<c:if test="${shortCourse == null}">
 								<option value="">Select item</option>
 								<c:forEach var="t" items="${topicList}">
@@ -106,7 +107,7 @@
 				<div>
 					<label>Teacher</label>
 					<p>
-						<select name="teacher" required="required">
+						<select class="edit-input-item" name="teacher" required="required">
 							<c:if test="${shortCourse == null}">
 								<option value="">Select item</option>
 								<c:forEach var="t" items="${teacherList}">
@@ -133,7 +134,7 @@
 				<div>
 					<label>Status</label>
 					<p>
-						<select name="status" required="required">
+						<select class="edit-input-item" name="status" required="required">
 							<c:if test="${shortCourse == null}">
 								<option value="">Select item</option>
 								<c:forEach var="t" items="${statusList}">
@@ -165,7 +166,7 @@
 					<c:if test="${shortCourse == null}">
 						<input type="hidden" value="true" name="isNewCourse" />
 					</c:if>
-					<button value="save" name="action" type="submit">Save</button>
+					<button class="button-for-admin" value="save" name="action" type="submit">Save</button>
 					<c:if test="${courseId != null}">
 						<c:if test="${courseId != -1}">Successful</c:if>
 						<c:if test="${courseId == -1}">Error</c:if>

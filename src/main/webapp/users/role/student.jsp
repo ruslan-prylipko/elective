@@ -6,22 +6,24 @@
 <head>
 <meta charset="UTF-8">
 <title>Student</title>
+<link rel="stylesheet" href=<%=request.getContextPath() + "/users/role/css/header.css"%>>
+<link rel="stylesheet" href=<%=request.getContextPath() + "/users/role/css/main.css"%>>
 </head>
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
-	<div>
+	<div class="main-block">
 		<div>
 			<div>
-				<h3>Courses</h3>
-				<a href="/elective/student?courses=my">My</a> <a
-					href="/elective/student?courses=available">Available</a>
+				<h3 class="text-header">Courses</h3>
+				<a class="button-link" href="/elective/student?courses=my">My</a>
+				<a class="button-link" href="/elective/student?courses=available">Available</a>
 			</div>
 		</div>
 		<div>
 			<c:if test="${myCoursesList != null}">
 				<hr>
-				<h4>My</h4>
-				<table>
+				<h4 class="text-header text-child-header">My</h4>
+				<table class="table">
 					<thead>
 						<tr>
 							<th>Name</th>
@@ -56,8 +58,8 @@
 		<div>
 			<c:if test="${availableCoursesList != null}">
 				<hr>
-				<h4>Available</h4>
-				<table>
+				<h4 class="text-header text-child-header">Available</h4>
+				<table class="table">
 					<thead>
 						<tr>
 							<th>Name</th>
@@ -67,6 +69,7 @@
 							<th>Topic</th>
 							<th>Teacher</th>
 							<th>Status</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>

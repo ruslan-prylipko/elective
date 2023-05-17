@@ -6,16 +6,18 @@
 <head>
 <meta charset="UTF-8">
 <title>Teacher</title>
+<link rel="stylesheet" href=<%=request.getContextPath() + "/users/role/css/header.css"%>>
+<link rel="stylesheet" href=<%=request.getContextPath() + "/users/role/css/main.css"%>>
 </head>
 <body>
 	<jsp:include page="header.jsp"></jsp:include>
-	<div>
+	<div class="main-block">
 		<div>
-			<h3>Journal</h3>
+			<h3 class="text-header">Journal</h3>
 		</div>
 		<div>
 			<c:if test="${coursesList != null}">
-				<table>
+				<table class="table">
 					<thead>
 						<tr>
 							<th>Student</th>

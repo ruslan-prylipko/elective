@@ -1,20 +1,19 @@
 <%@ page import="com.my.entity.User"%>
-<div>
+<div class="main-box">
 	<%
 	User user = (User) session.getAttribute("user");
 	%>
-	<div>
-		<div><%=user.getUsername()%></div>
-		<div><%=user.getFirstName()%></div>
-		<div><%=user.getLastName()%></div>
-		<div><%=user.getMiddleName()%></div>
-		<div><%=user.getEmail()%></div>
-		<div><%=user.getRole()%></div>
+	<div class="user-info">
+		<div class="user-info-item"><%=user.getRole()%></div>
+		<div class="user-info-item"><%=user.getUsername()%></div>
+		<div class="user-info-item"><%=user.getFirstName()%></div>
+		<div class="user-info-item"><%=user.getLastName()%></div>
+		<div class="user-info-item"><%=user.getMiddleName()%></div>
+		<div class="user-info-item"><%=user.getEmail()%></div>
+		<div class="button-item">
+			<form action=<%=request.getContextPath() + "/login"%> method="get">
+				<button class="button" value="logout" name="action">Sign out</button>
+			</form>
+		</div>
 	</div>
-	<div>
-		<form action=<%=request.getContextPath() + "/login"%> method="get">
-			<button value="logout" name="action">Sign out</button>
-		</form>
-	</div>
-	<hr>
 </div>
