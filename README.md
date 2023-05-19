@@ -1,4 +1,4 @@
-This project is written for educational purposes only
+This project is written for educational purposes only!
 
 Task
 
@@ -11,8 +11,10 @@ Each user has a personal account, which displays brief information about the use
 - a list of courses for which the student has registered, but which have not yet started;
 - a list of courses for which the student has registered and which are in progress;
 - a list of completed courses with information on success;
+
 for the teacher:
 - viewing and editing of the electronic journal for the courses attached to it.
+
 The system administrator has the following rights:
 - registration of the teacher and approval of the course;
 - adding, deleting, editing a course;
